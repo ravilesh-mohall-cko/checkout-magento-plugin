@@ -1,0 +1,21 @@
+{
+    "name":"checkoutapi/chargePayment",
+    "type":"magento-module",
+    "description":"Magento payment modules for checkout gateway 3.0.",
+     "authors":[
+         {
+              "name":"Dhiraj Gangoosirdar",
+              "email":"dhiraj.gangoosirdar@checkout.com"
+         }
+     ],
+
+    "require":{
+        "magento-hackathon/magento-composer-installer":"*"
+    },
+    "extra":{
+        "map":[
+            ["app/etc/modules/CheckoutApi_ChargePayment.xml", "app/etc/modules/CheckoutApi_ChargePayment.xml"],
+            ["app/code/community/CheckoutApi/ChargePayment/", "app/code/community/CheckoutApi/ChargePayment/"]
+        ]
+    }
+}

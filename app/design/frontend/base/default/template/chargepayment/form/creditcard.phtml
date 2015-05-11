@@ -1,0 +1,61 @@
+<?php $tokenRersult = $this->getPaymentTokenResult(); ?>
+<?php if($tokenRersult['succes']): ?>
+    <script type="text/javascript">
+        var reload = false;
+        window.CKOConfig = {
+            debugMode: false,
+            renderMode: 2,
+            namespace: 'CheckoutIntegration',
+            publicKey: '<?php echo $this->getPublicKey()?>',
+            paymentToken: "<?php echo $tokenRersult['token'] ?>",
+            value: '<?php echo $this->getAmount() ?>',
+            currency: '<?php echo $this->getCurrency() ?>',
+            customerEmail: '<?php echo $this->getEmailAddress() ?>',
+            customerName: '<?php echo $this->getName()?>',
+            paymentMode: 'mixed',
+            title: '<?php echo $this->getStoreName(); ?>',
+            subtitle:'<?php echo $this->__('Please enter your credit card details') ?>',
+            widgetContainerSelector: '.payment-form',
+            cardCharged: function(event){
+
+                if($buttonCheckout = $$('.btn-checkout')) {
+                    var eventClick = $buttonCheckout[0].readAttribute('data-clickEvent');
+                    document.getElementById('cko-cc-paymenToken').value = event.data.paymentToken;
+                    $$('.btn-checkout')[0].writeAttribute('onclick', eventClick);
+                    fireEvent($$('.btn-checkout')[0], 'click');
+
+                }
+            },
+            paymentTokenExpired: function(){
+                reload = true;
+            },
+            lightboxDeactivated: function() {
+                if(reload) {
+                    window.location.reload();
+                }
+            },
+            ready: function() {
+
+            }
+        };
+
+        Checkout.render(window.CKOConfig);
+
+
+    </script>
+
+    <div class="payment-form"></div>
+
+    <?php $_code=$this->getMethodCode() ?>
+    <ul class="form-list" id="payment_form_<?php echo $_code ?>" style="display:none;">
+        <li>
+            <input type="hidden" name="payment[cko_cc_paymenToken]" id="cko-cc-paymenToken" value="<?php echo
+            $this->getPaymentToken() ?>"  class="input-text "/>
+
+        </li>
+    </ul>
+<?php else:  ?>
+    <div style="" id="advice-required-entry-creditcard_cc_token" class="validation-advice">
+        <?php echo $this->__($tokenRersult['message']) ?>
+    </div>
+<?php endif; ?>

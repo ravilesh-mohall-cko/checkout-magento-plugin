@@ -1,0 +1,17 @@
+
+<script type="text/javascript">
+
+
+    $buttonCheckout =  null;
+    if($buttonCheckout = $$('.btn-checkout')) {
+        var eventClick = $buttonCheckout[0].readAttribute('onclick');
+       <?php if($this->isSelected()): ?>
+                $buttonCheckout[0].writeAttribute('onclick','Checkout.open()');
+        <?php endif; ?>
+        $buttonCheckout[0].writeAttribute('data-clickevent',eventClick);
+
+
+    }
+
+
+</script>
