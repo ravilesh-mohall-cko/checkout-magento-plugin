@@ -51,10 +51,12 @@ abstract class CheckoutApi_ChargePayment_Model_Method_Abstract extends Mage_Paym
 			}
 
 		} else {
-			$errorDetails = '';
+			
+            $errorDetails = $respondCharge->getMessage ();
 			if ( $this->getDebugFlag () ) {
-				$errorDetails = $respondCharge->getMessage ();
+                Mage::log( $respondCharge->getExceptionState ()->getErrorMessage (),Zend_Log::DEBUG,'cko.log');
 			}
+
 			Mage::throwException ( Mage::helper ( 'payment' )->__ ( $respondCharge->getExceptionState ()->getErrorMessage () .
 				' ( ' . $errorDetails . ')'
 			) );
