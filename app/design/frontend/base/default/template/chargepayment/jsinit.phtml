@@ -3,10 +3,16 @@
 
 
     $buttonCheckout =  null;
-    if($buttonCheckout = $$('.btn-checkout')) {
-        var eventClick = $buttonCheckout[0].readAttribute('onclick');
+    if(($buttonCheckout = $$('.btn-checkout')).length) {
+
+        var eventClick = $buttonCheckout[0].readAttribute('onclick'),
+            clickStatus = IWD.OPC.Checkout.disabledSave;
        <?php if($this->isSelected()): ?>
-                $buttonCheckout[0].writeAttribute('onclick','Checkout.open()');
+                $buttonCheckout[0].writeAttribute('onclick','CheckoutIntegration.open();IWD.OPC.Checkout.disabledSave' +
+                ' = true;');
+                IWD.OPC.Checkout.disabledSave = true;
+        <?php else: ?>
+             IWD.OPC.Checkout.disabledSave = clickStatus;
         <?php endif; ?>
         $buttonCheckout[0].writeAttribute('data-clickevent',eventClick);
 

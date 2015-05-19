@@ -12,7 +12,7 @@
         </models>
         <blocks>
             <checkoutapi_chargePayment>
-                <class>CheckoutAPi_ChargePayment_Block</class>
+                <class>CheckoutApi_ChargePayment_Block</class>
             </checkoutapi_chargePayment>
         </blocks>
         <helpers>

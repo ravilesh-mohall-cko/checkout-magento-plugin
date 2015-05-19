@@ -31,4 +31,27 @@
             </block>
         </reference>
     </checkout_onepage_paymentmethod>
+
+    <opc_index_index translate="label">
+        <reference name="before_body_end">
+            <block type="core/text" name="checkoutapi_js">
+
+                <action method="setText" ifconfig="payment/creditcard/active">
+                    <content  helper="checkoutapi_chargePayment/data/chargePayment/data/getJsPath">
+
+                    </content>
+                </action>
+            </block>
+        </reference>
+    </opc_index_index>
+
+    <opc_json_savepayment>
+        <reference name="payment.method.creditcard">
+            <block name="checkoutapi.widget" type="checkoutapi_chargePayment/checkoutjs" >
+                <action method="setTemplate" ifconfig="payment/creditcard/active" >
+                    <template>chargepayment/jsinit.phtml</template>
+                </action>
+            </block>
+        </reference>
+    </opc_json_savepayment>
 </layout>
