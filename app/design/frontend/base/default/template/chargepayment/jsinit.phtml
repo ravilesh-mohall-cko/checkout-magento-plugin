@@ -8,11 +8,24 @@
         var eventClick = $buttonCheckout[0].readAttribute('onclick'),
             clickStatus = IWD.OPC.Checkout.disabledSave;
        <?php if($this->isSelected()): ?>
-                $buttonCheckout[0].writeAttribute('onclick','CheckoutIntegration.open();IWD.OPC.Checkout.disabledSave' +
+                IWD.OPC.Plugin.event('saveOrderBefore', function() {
+                  if(!IWD.OPC.ckostatus) {
+                      IWD.OPC.saveOrderStatus = false;
+                      IWD.OPC.ckostatus = true;
+                      $('cko-cc-paymenToken').addClassName('required-entry');
+                      CheckoutIntegration.open();
+                  }else {
+                      document.getElementById('cko-cc-paymenToken').value = IWD.OPC.ckoToken;
+                  }
+                });
+             /*   $buttonCheckout[0].writeAttribute('onclick','CheckoutIntegration.open();IWD.OPC.Checkout' +
+                '.disabledSave' +
                 ' = true;');
-                IWD.OPC.Checkout.disabledSave = true;
+                IWD.OPC.Checkout.disabledSave = true;*/
         <?php else: ?>
-             IWD.OPC.Checkout.disabledSave = clickStatus;
+        IWD.OPC.Plugin.event('saveOrderBefore', function() {
+
+        });
         <?php endif; ?>
         $buttonCheckout[0].writeAttribute('data-clickevent',eventClick);
 

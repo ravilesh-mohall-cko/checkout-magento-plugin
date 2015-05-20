@@ -4,6 +4,7 @@
             <active>true</active>
             <codePool>community</codePool>
             <depends><Mage_Payment/></depends>
+            <depends><IWD_Opc/></depends>
         </CheckoutApi_ChargePayment>
     </modules>
 

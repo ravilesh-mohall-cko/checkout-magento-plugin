@@ -21,16 +21,27 @@
                 if($buttonCheckout = $$('.btn-checkout')) {
                     var eventClick = $buttonCheckout[0].readAttribute('data-clickEvent');
                     document.getElementById('cko-cc-paymenToken').value = event.data.paymentToken;
-                    IWD.OPC.Checkout.disabledSave = false;
-                    $$('.btn-checkout')[0].writeAttribute('onclick', eventClick);
-                    fireEvent($$('.opc-btn-checkout')[0], 'click');
+                    IWD.OPC.ckoToken = event.data.paymentToken;
+                    IWD.OPC.saveOrderStatus = true;
+                    IWD.OPC.ckostatus = false;
+                    IWD.OPC.chargeCreated = true;
+                    IWD.OPC.savePayment();
+//                    $$('.btn-checkout')[0].writeAttribute('onclick', eventClick);
+//                    fireEvent($$('.opc-btn-checkout')[0], 'click');
 
                 }
             },
             paymentTokenExpired: function(){
                 reload = true;
+                IWD.OPC.ckostatus = false;
+                IWD.OPC.ckoToken = '';
+
             },
             lightboxDeactivated: function() {
+                IWD.OPC.ckostatus = false;
+                if(!IWD.OPC.chargeCreated) {
+                    IWD.OPC.ckoToken = '';
+                }
                 if(reload) {
                     window.location.reload();
                 }
@@ -41,9 +52,32 @@
         };
         if(typeof Checkout!='undefined' && Checkout.hasOwnProperty('render')) {
 
-            Checkout.render(window.CKOConfig);
+
+            if (IWD.OPC.Checkout.ajaxProgress!=false){
+                clearTimeout(IWD.OPC.Checkout.ajaxProgress);
+            }
+
+            IWD.OPC.Checkout.ajaxProgress = setTimeout(function(){
+                Checkout.render(window.CKOConfig);
+            }, 1000);
+
+
         }else if(typeof CheckoutIntegration !='undefined' && CheckoutIntegration.hasOwnProperty('render')) {
-            CheckoutIntegration.render(window.CKOConfig);
+
+            if (IWD.OPC.Checkout.ajaxProgress!=false){
+                clearTimeout(IWD.OPC.Checkout.ajaxProgress);
+            }
+
+            IWD.OPC.Checkout.ajaxProgress = setTimeout(function(){
+                CheckoutIntegration.render(window.CKOConfig);
+            }, 1000);
+
+//            IWD.OPC.Plugin.event('saveOrderBefore', function() {
+//                IWD.OPC.saveOrderStatus = false;
+//                $('cko-cc-paymenToken').addClassName('required-entry');
+//
+//                /CheckoutIntegration.open();
+//            });
         }
 
 
@@ -52,7 +86,7 @@
     <div class="payment-form"></div>
 
     <?php $_code=$this->getMethodCode() ?>
-    <ul class="form-list" id="payment_form_<?php echo $_code ?>" style="display:none;">
+    <ul class="form-list" id="payment_form_<?php echo $_code ?>">
         <li>
             <input type="hidden" name="payment[cko_cc_paymenToken]" id="cko-cc-paymenToken" value="<?php echo
             $this->getPaymentToken() ?>"  class="input-text "/>
