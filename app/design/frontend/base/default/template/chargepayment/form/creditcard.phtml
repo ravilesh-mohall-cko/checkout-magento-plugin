@@ -47,9 +47,14 @@
                 }
             },
             ready: function() {
+                if($$('.payment-form')[0].down('link')) {
+                    var head = $$('head')[0];
+                    head.appendChild($$('.payment-form')[0].down('link'));
+                }
 
             }
         };
+
         if(typeof Checkout!='undefined' && Checkout.hasOwnProperty('render')) {
 
 
