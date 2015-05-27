@@ -4,6 +4,7 @@
             <active>true</active>
             <codePool>community</codePool>
             <depends><Mage_Payment/></depends>
+            <depends><AnattaDesign_AwesomeCheckout/></depends>
         </CheckoutApi_ChargePayment>
     </modules>
 

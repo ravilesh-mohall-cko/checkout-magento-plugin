@@ -20,7 +20,9 @@
                 </action>
             </block>
         </reference>
+
     </checkout_onepage_index>
+
 
     <checkout_onepage_paymentmethod>
         <reference name="payment.method.creditcard">

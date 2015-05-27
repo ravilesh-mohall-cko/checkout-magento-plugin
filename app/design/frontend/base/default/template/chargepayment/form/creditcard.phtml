@@ -38,8 +38,10 @@
 
             }
         };
+        if(typeof CheckoutIntegration !='undefined' && CheckoutIntegration.hasOwnProperty('render')) {
+            CheckoutIntegration.render(window.CKOConfig);
+        }
 
-        Checkout.render(window.CKOConfig);
 
 
     </script>

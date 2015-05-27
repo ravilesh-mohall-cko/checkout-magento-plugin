@@ -54,6 +54,6 @@
      public function isSelected()
      {
 
-        return $this->_getQuote()->getPayment()->getMethod() == 'creditcard';
+        return ($this->_getQuote()->getPayment()->getMethod() == 'creditcard')?true:false;
      }
 }
