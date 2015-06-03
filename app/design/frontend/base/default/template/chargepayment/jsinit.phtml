@@ -9,7 +9,7 @@
             clickStatus = IWD.OPC.Checkout.disabledSave;
        <?php if($this->isSelected()): ?>
                 IWD.OPC.Plugin.event('saveOrderBefore', function() {
-                  if(!IWD.OPC.ckostatus) {
+                  if(!IWD.OPC.ckostatus && IWD.OPC.Shipping.validateShippingMethod()) {
                       IWD.OPC.saveOrderStatus = false;
                       IWD.OPC.ckostatus = true;
                       $('cko-cc-paymenToken').addClassName('required-entry');
