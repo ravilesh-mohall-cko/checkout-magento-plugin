@@ -1,17 +1,13 @@
 
 <script type="text/javascript">
-
-
     $buttonCheckout =  null;
-    if($buttonCheckout = $$('.btn-checkout')) {
+    if($buttonCheckout = $$('.onestepcheckout-place-order')) {
         var eventClick = $buttonCheckout[0].readAttribute('onclick');
-       <?php if($this->isSelected()): ?>
-                $buttonCheckout[0].writeAttribute('onclick','Checkout.open()');
+        <?php if($this->isSelected()): ?>
+        $buttonCheckout[0].writeAttribute('onclick','CheckoutIntegration.open()');
         <?php endif; ?>
         $buttonCheckout[0].writeAttribute('data-clickevent',eventClick);
 
 
     }
-
-
 </script>

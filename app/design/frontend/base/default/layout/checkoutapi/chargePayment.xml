@@ -9,18 +9,10 @@
         </reference>
     </checkout_onepage_review>
 
-    <checkout_onepage_index translate="label">
-        <reference name="before_body_end">
-            <block type="core/text" name="checkoutapi_js">
 
-                <action method="setText" ifconfig="payment/creditcard/active">
-                    <content  helper="checkoutapi_chargePayment/data/chargePayment/data/getJsPath">
-
-                    </content>
-                </action>
-            </block>
-        </reference>
-    </checkout_onepage_index>
+    <onestepcheckout_index_index translate="label">
+        <update handle ="update_onepage_index" />
+    </onestepcheckout_index_index>
 
     <checkout_onepage_paymentmethod>
         <reference name="payment.method.creditcard">
@@ -31,4 +23,17 @@
             </block>
         </reference>
     </checkout_onepage_paymentmethod>
+
+    <update_onepage_index translate="label">
+        <reference name="before_body_end">
+            <block type="core/text" name="checkoutapi_js">
+
+                <action method="setText" ifconfig="payment/creditcard/active">
+                    <content  helper="checkoutapi_chargePayment/data/chargePayment/data/getJsPath">
+
+                    </content>
+                </action>
+            </block>
+        </reference>
+    </update_onepage_index>
 </layout>
