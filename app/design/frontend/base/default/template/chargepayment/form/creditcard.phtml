@@ -9,6 +9,11 @@
             publicKey: '<?php echo $this->getPublicKey()?>',
             paymentToken: "<?php echo $tokenRersult['token'] ?>",
             value: '<?php echo $this->getAmount() ?>',
+            logoUrl: '<?php echo $this->getLightBoxUrl() ?>',
+            themeColor: '<?php echo $this->getThemeColor() ?>',
+            buttonColor: '<?php echo $this->getButtonColor() ?>',
+            iconColor: '<?php echo $this->getIconColor() ?>',
+            useCurrencyCode: '<?php echo $this->getUseCurrencyCode() ?>',
             currency: '<?php echo $this->getCurrency() ?>',
             customerEmail: '<?php echo $this->getEmailAddress() ?>',
             customerName: '<?php echo $this->getName()?>',
@@ -18,11 +23,11 @@
             widgetContainerSelector: '.payment-form',
             cardCharged: function(event){
 
-                if($buttonCheckout = $$('.btn-checkout')) {
+                if($buttonCheckout = $$('#checkout-review-submit .btn-checkout')) {
                     var eventClick = $buttonCheckout[0].readAttribute('data-clickEvent');
                     document.getElementById('cko-cc-paymenToken').value = event.data.paymentToken;
                     $$('.btn-checkout')[0].writeAttribute('onclick', eventClick);
-                    fireEvent($$('.btn-checkout')[0], 'click');
+                    fireEvent($$('#checkout-review-submit .btn-checkout')[0], 'click');
 
                 }
             },

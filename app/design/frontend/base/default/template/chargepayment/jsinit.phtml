@@ -3,12 +3,27 @@
 
 
     $buttonCheckout =  null;
-    if($buttonCheckout = $$('.btn-checkout')) {
-        var eventClick = $buttonCheckout[0].readAttribute('onclick');
-       <?php if($this->isSelected()): ?>
-                $buttonCheckout[0].writeAttribute('onclick','Checkout.open()');
+    if($buttonCheckout = $$('#checkout-review-submit .btn-checkout')) {
+        var eventClick = $buttonCheckout[$buttonCheckout.length-1].readAttribute('onclick');
+        <?php if($this->isSelected()): ?>
+
+        if(typeof Checkout !='undefined' && Checkout.hasOwnProperty('render')) {
+            $buttonCheckout.each(function(item,index){
+                $buttonCheckout[index].writeAttribute('onclick','Checkout.open()');
+            });
+
+        }else   if(typeof CheckoutIntegration !='undefined' && CheckoutIntegration.hasOwnProperty('render')) {
+
+            $buttonCheckout.each(function(item,index){
+                $buttonCheckout[index].writeAttribute('onclick','CheckoutIntegration.open()');
+            });
+        }
+
         <?php endif; ?>
-        $buttonCheckout[0].writeAttribute('data-clickevent',eventClick);
+        $buttonCheckout.each(function(item,index){
+            $buttonCheckout[index].writeAttribute('data-clickevent',eventClick);
+        });
+
 
 
     }
