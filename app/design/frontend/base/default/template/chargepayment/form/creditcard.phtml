@@ -14,6 +14,12 @@
             customerName: '<?php echo $this->getName()?>',
             paymentMode: 'mixed',
             title: '<?php echo $this->getStoreName(); ?>',
+            logoUrl: '<?php echo $this->getLightBoxUrl() ?>',
+            themeColor: '<?php echo $this->getThemeColor() ?>',
+            buttonColor: '<?php echo $this->getButtonColor() ?>',
+            iconColor: '<?php echo $this->getIconColor() ?>',
+            useCurrencyCode: '<?php echo $this->getUseCurrencyCode() ?>',
+            currency: '<?php echo $this->getCurrency() ?>',
             subtitle:'<?php echo $this->__('Please enter your credit card details') ?>',
             widgetContainerSelector: '.payment-form',
             cardCharged: function(event){

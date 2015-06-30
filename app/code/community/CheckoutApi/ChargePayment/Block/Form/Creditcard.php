@@ -36,6 +36,35 @@ class CheckoutApi_ChargePayment_Block_Form_Creditcard  extends Mage_Payment_Bloc
     {
         return $this->getConfigData('publickey');
     }
+     public  function getLightBoxUrl()
+    {
+        return $this->getConfigData('icon_url');
+    }
+    public  function getThemeColor()
+    {
+        if($theme = $this->getConfigData('theme_color')) {
+            return '#'.$theme;
+        }
+        return null;
+    }
+    public  function getButtonColor()
+    {
+        if($button_color = $this->getConfigData('button_color')) {
+            return '#'.$button_color;
+        }
+        return null;
+    }
+    public  function getIconColor()
+    {
+        if($icon_color = $this->getConfigData('icon_color')) {
+            return '#'.$icon_color;
+        }
+        return null;
+    }
+    public  function getUseCurrencyCode()
+    {
+        return $this->getConfigData('use_currency_code')?true:false;
+    }
 
     public function getAmount()
     {
