@@ -26,7 +26,7 @@
                 if($buttonCheckout = $$('#checkout-review-submit .btn-checkout')) {
                     var eventClick = $buttonCheckout[0].readAttribute('data-clickEvent');
                     document.getElementById('cko-cc-paymenToken').value = event.data.paymentToken;
-                    $$('.btn-checkout')[0].writeAttribute('onclick', eventClick);
+                    $$('#checkout-review-submit .btn-checkout')[0].writeAttribute('onclick', eventClick);
                     fireEvent($$('#checkout-review-submit .btn-checkout')[0], 'click');
 
                 }
@@ -43,8 +43,11 @@
 
             }
         };
-
-        Checkout.render(window.CKOConfig);
+        if(typeof Checkout!='undefined' && Checkout.hasOwnProperty('render')) {
+            Checkout.render(window.CKOConfig);
+        }else if(typeof CheckoutIntegration!='undefined' && CheckoutIntegration.hasOwnProperty('render')){
+            CheckoutIntegration.render(window.CKOConfig);
+        }
 
 
     </script>
