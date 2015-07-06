@@ -9,13 +9,13 @@
 
         if(typeof Checkout !='undefined' && Checkout.hasOwnProperty('render')) {
             $buttonCheckout.each(function(item,index){
-                $buttonCheckout[index].writeAttribute('onclick','Checkout.open()');
+                $buttonCheckout[index].writeAttribute('onclick','Checkout.open(); checkout.setLoadWaiting(\'review\')');
             });
 
         }else   if(typeof CheckoutIntegration !='undefined' && CheckoutIntegration.hasOwnProperty('render')) {
 
             $buttonCheckout.each(function(item,index){
-                $buttonCheckout[index].writeAttribute('onclick','CheckoutIntegration.open()');
+                $buttonCheckout[index].writeAttribute('onclick','CheckoutIntegration.open(); checkout.setLoadWaiting(\'review\')');
             });
         }
 

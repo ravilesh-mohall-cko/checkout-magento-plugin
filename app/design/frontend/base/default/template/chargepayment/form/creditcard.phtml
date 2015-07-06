@@ -22,7 +22,7 @@
             subtitle:'<?php echo $this->__('Please enter your credit card details') ?>',
             widgetContainerSelector: '.payment-form',
             cardCharged: function(event){
-
+                checkout.setLoadWaiting(false);
                 if($buttonCheckout = $$('#checkout-review-submit .btn-checkout')) {
                     var eventClick = $buttonCheckout[0].readAttribute('data-clickEvent');
                     document.getElementById('cko-cc-paymenToken').value = event.data.paymentToken;
@@ -33,8 +33,10 @@
             },
             paymentTokenExpired: function(){
                 reload = true;
+                checkout.setLoadWaiting(false);
             },
             lightboxDeactivated: function() {
+                checkout.setLoadWaiting(false);
                 if(reload) {
                     window.location.reload();
                 }
