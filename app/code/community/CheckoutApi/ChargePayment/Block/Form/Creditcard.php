@@ -70,7 +70,7 @@ class CheckoutApi_ChargePayment_Block_Form_Creditcard  extends Mage_Payment_Bloc
 
     public  function getUseCurrencyCode()
     {
-        return $this->getConfigData('use_currency_code')?true:false;
+        return $this->getConfigData('use_currency_code')?'true':'false';
     }
 
     public function getAmount()
