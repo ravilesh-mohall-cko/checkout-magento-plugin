@@ -96,7 +96,7 @@ class CheckoutApi_ChargePayment_Block_Form_Creditcard  extends Mage_Payment_Bloc
     {
 
         $Api = CheckoutApi_Api::getApi(array('mode'=>$this->getConfigData('mode')));
-        $scretKey = $this->getConfigData('privatekey');
+        $secretKey  = $this->getConfigData('privatekey');
         $billingAddress = $this->_getQuote()->getBillingAddress();
         $shippingAddress = $this->_getQuote()->getBillingAddress();
         $orderedItems = $this->_getQuote()->getAllItems();
@@ -127,7 +127,7 @@ class CheckoutApi_ChargePayment_Block_Form_Creditcard  extends Mage_Payment_Bloc
         }
 
         $config = array();
-        $config['authorization'] = $scretKey  ;
+        $config['authorization'] = $secretKey ;
         $config['mode'] = $this->getConfigData('mode');
         $config['timeout'] = $this->getConfigData('timeout');
         $street = Mage::helper('customer/address')
@@ -139,6 +139,10 @@ class CheckoutApi_ChargePayment_Block_Form_Creditcard  extends Mage_Payment_Bloc
             'country'        =>    $billingAddress->getCountry(),
             'city'           =>    $billingAddress->getCity(),
             'phone'          =>    array('number' => $billingAddress->getTelephone()),
+            'metadata'          =>   array(
+                'server'  => Mage::helper('core/http')->getHttpUserAgent(),
+                'quoteId' => $this->_getQuote()->getId()
+            )
         );
 
         $config['postedParam'] = array (
@@ -146,7 +150,8 @@ class CheckoutApi_ChargePayment_Block_Form_Creditcard  extends Mage_Payment_Bloc
             "chargeMode"        =>    1,
             'currency'          =>    $currencyDesc,
             'shippingDetails'   =>    $shippingAddressConfig,
-            'products'          =>    $products
+            'products'          =>    $products,
+
         );
 
         if($this->getConfigData('order_status_capture') == Mage_Paygate_Model_Authorizenet::ACTION_AUTHORIZE ) {

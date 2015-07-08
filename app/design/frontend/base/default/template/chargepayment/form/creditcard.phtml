@@ -20,6 +20,7 @@
             iconColor: '<?php echo $this->getIconColor() ?>',
             useCurrencyCode: '<?php echo $this->getUseCurrencyCode() ?>',
             currency: '<?php echo $this->getCurrency() ?>',
+            forceMobileRedirect: true,
             subtitle:'<?php echo $this->__('Please enter your credit card details') ?>',
             widgetContainerSelector: '.payment-form',
             cardCharged: function(event){
@@ -62,7 +63,7 @@
     <ul class="form-list" id="payment_form_<?php echo $_code ?>" style="display:none;">
         <li>
             <input type="hidden" name="payment[cko_cc_paymenToken]" id="cko-cc-paymenToken" value="-1"  class="input-text required-bridge-entry"/>
-
+            <input type="hidden" name="payment[cko_cc_redirectUrl]" id="cko-cc-redirectUrl" value=""  class="input-text "/>
         </li>
     </ul>
 <?php else:  ?>
@@ -99,4 +100,15 @@
         }
         return value==-1?false:true;
     });
+</script>
+
+<script type="text/javascript">
+    if(typeof Checkout !='undefined' && Checkout.hasOwnProperty('render') && Checkout.isMobile()) {
+
+        document.getElementById('cko-cc-redirectUrl').value = Checkout.getRedirectionUrl();
+    }else   if(typeof CheckoutIntegration !='undefined' && CheckoutIntegration.hasOwnProperty('render') &&  CheckoutIntegration.isMobile()) {
+
+        document.getElementById('cko-cc-redirectUrl').value = CheckoutIntegration.getRedirectionUrl();
+
+    }
 </script>

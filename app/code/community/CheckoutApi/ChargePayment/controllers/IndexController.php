@@ -70,10 +70,10 @@ class CheckoutApi_ChargePayment_IndexController extends Mage_Core_Controller_Fro
 									$_payment->save();
 
 								$_order->setStatus ( $orderStatus , false );
-								$_order->addStatusToHistory ( $orderStatus , 'Payment Sucessfully captured
+								$_order->addStatusToHistory ( $orderStatus , 'Payment successfully  captured
                                 with Transaction ID ' . $objectCharge->getId () );
 								$_order->save ();
-								$this->getResponse()->setBody('Payment Sucessfully captured
+								$this->getResponse()->setBody('Payment successfully  captured
                                 with Transaction ID '.$objectCharge->getId());
 
 							}else {
@@ -169,6 +169,50 @@ class CheckoutApi_ChargePayment_IndexController extends Mage_Core_Controller_Fro
 		}
 	}
 
+    public  function callbackAction()
+    {
+        $postedVal = $this->getRequest()->getParams();
+        if(!empty($postedVal) && isset($postedVal['cko-payment-token']) && isset($postedVal['cko-track-id'])) {
+            $order_id  = $postedVal['cko-track-id'];
+            $paymentToken  = $postedVal['cko-payment-token'];
+            $storeId = Mage::app ()->getStore ()->getId ();
 
+            $Api = CheckoutApi_Api::getApi(array('mode'=>$this->_requesttConfigData('mode')));
+            $config['paymentToken'] = $paymentToken;
+            $config['authorization'] = $this->_requesttConfigData('privatekey');
+            $chargeObject = $Api->verifyChargePaymentToken($config);
+            $_order = Mage::getModel('sales/order')->loadByIncrementId($order_id);
+            $_payment = $_order->getPayment();
+            $chargeUpdated = $Api->updateTrackId($chargeObject, $order_id);
+            if($chargeObject->isValid()) {
+                $chargeId = $chargeObject->getId();
+                if ($chargeObject->getStatus() == 'Authorised' || $chargeObject->getStatus() == 'Flagged') {
+                    $_payment->setParentTransactionId($chargeId);
+                    $_payment->authorize ( true,$_order->getBaseTotalDue() );
+                    $orderStatus = $this->_requesttConfigData ( 'order_status' );
+                    $_rawInfo = $chargeObject->toArray ();
+                    $_payment->setAdditionalInformation ( 'rawrespond' , $_rawInfo )
+                        ->setShouldCloseParentTransaction('Completed' === $orderStatus)
+                        ->setIsTransactionClosed(0)
+                        ->setTransactionAdditionalInfo ( Mage_Sales_Model_Order_Payment_Transaction
+                        ::RAW_DETAILS , $_rawInfo );
+                    $_payment->save();
+                    $_order->setStatus ( $orderStatus , false );
+                    $_order->addStatusToHistory ( $orderStatus , 'Payment successfully '.$chargeObject->getStatus().'
+                    with Transaction ID ' . $chargeObject->getId () );
+                    $_order->save ();
+                    $this->getResponse()->setBody('Payment successfully '.$chargeObject->getStatus().'
+                                with Transaction ID '.$chargeObject->getId());
+                    $this->_redirect('checkout/onepage/success', array('_secure'=>true));
+
+                }elseif($chargeObject->getStatus() == 'Voided'  ) {
+
+                }elseif($chargeObject->getStatus() == 'Decline') {
+
+                }
+            }// end is valid
+        }//end if posted empty
+
+    }
 
 }

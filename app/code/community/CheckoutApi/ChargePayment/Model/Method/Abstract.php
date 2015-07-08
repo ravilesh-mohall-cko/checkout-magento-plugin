@@ -7,6 +7,7 @@ abstract class CheckoutApi_ChargePayment_Model_Method_Abstract extends Mage_Paym
 	protected $_canRefund = true;
 	protected $_canVoid = true;
 	protected $_canOrder = true;
+    protected $_isInitializeNeeded    = true;
 
 
 	private function _placeOrder ( Varien_Object $payment , $amount , $messageSuccess , $extraConfig )
@@ -209,4 +210,19 @@ abstract class CheckoutApi_ChargePayment_Model_Method_Abstract extends Mage_Paym
 		}
 		return $this;
 	}
+
+
+    /**
+     * Instantiate state and set it to state object
+     * @param string $paymentAction
+     * @param Varien_Object
+     */
+    public function initialize($paymentAction, $stateObject)
+    {
+        $state = Mage_Sales_Model_Order::STATE_PENDING_PAYMENT;
+        $stateObject->setState($state);
+        $stateObject->setStatus('pending_payment');
+        $stateObject->setIsNotified(false);
+    }
+
 }
