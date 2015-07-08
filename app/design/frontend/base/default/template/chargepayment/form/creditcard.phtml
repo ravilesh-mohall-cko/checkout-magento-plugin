@@ -25,10 +25,15 @@
             cardCharged: function(event){
                 checkout.setLoadWaiting(false);
                 if($buttonCheckout = $$('#checkout-review-submit .btn-checkout')) {
-                    var eventClick = $buttonCheckout[0].readAttribute('data-clickEvent');
+
+                    var eventClick = $buttonCheckout[0].show().readAttribute('data-clickEvent');
                     document.getElementById('cko-cc-paymenToken').value = event.data.paymentToken;
                     $$('#checkout-review-submit .btn-checkout')[0].writeAttribute('onclick', eventClick);
-                    fireEvent($$('#checkout-review-submit .btn-checkout')[0], 'click');
+                    $('review-please-wait').show();
+                   fireEvent($$('#checkout-review-submit .btn-checkout')[0], 'click');
+                    $$('#checkout-review-submit .btn-checkout')[0].hide();
+
+                    checkout.setLoadWaiting('review');
 
                 }
             },
