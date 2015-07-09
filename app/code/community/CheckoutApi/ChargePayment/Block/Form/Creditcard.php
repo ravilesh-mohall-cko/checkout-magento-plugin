@@ -78,11 +78,24 @@ class CheckoutApi_ChargePayment_Block_Form_Creditcard  extends Mage_Payment_Bloc
 
     public function getEmailAddress()
     {
+        $helper = Mage::helper('customer');
+        if($helper->isLoggedIn())    {
+
+            $customer = $helper->getCustomer();
+            return  $customer->getEmail();
+        }
         return  $this->_getQuote()->getBillingAddress()->getEmail();
     }
 
     public function getName()
     {
+        $helper = Mage::helper('customer');
+        if($helper->isLoggedIn())    {
+            $customer = $helper->getCustomer();
+            $customerName = $customer->getFirstname() .' '.$customer->getLastname();
+            return  $customerName;
+        }
+
         return  $this->_getQuote()->getBillingAddress()->getName();
     }
 
