@@ -45,7 +45,14 @@
             },
             ready: function() {
 
+                if(typeof Checkout !='undefined' && Checkout.hasOwnProperty('render') && Checkout.isMobile()) {
 
+                    document.getElementById('cko-cc-redirectUrl').value = Checkout.getRedirectionUrl();
+                }else if(typeof CheckoutIntegration !='undefined' && CheckoutIntegration.hasOwnProperty('render') &&  CheckoutIntegration.isMobile()) {
+
+                    document.getElementById('cko-cc-redirectUrl').value = CheckoutIntegration.getRedirectionUrl();
+
+                }
 
             }
         };
@@ -94,7 +101,11 @@
 
         if($$('[name="payment\[method\]"]:checked')[0].id=='p_method_creditcard' && value==-1  && result) {
             CheckoutIntegration.configure(window.CKOConfig);
-            CheckoutIntegration.open();
+            if( !CheckoutIntegration.isMobile()) {
+                CheckoutIntegration.open();
+            }else {
+                return true;
+            }
         }else {
             return true;
         }
@@ -102,13 +113,3 @@
     });
 </script>
 
-<script type="text/javascript">
-    if(typeof Checkout !='undefined' && Checkout.hasOwnProperty('render') && Checkout.isMobile()) {
-
-        document.getElementById('cko-cc-redirectUrl').value = Checkout.getRedirectionUrl();
-    }else   if(typeof CheckoutIntegration !='undefined' && CheckoutIntegration.hasOwnProperty('render') &&  CheckoutIntegration.isMobile()) {
-
-        document.getElementById('cko-cc-redirectUrl').value = CheckoutIntegration.getRedirectionUrl();
-
-    }
-</script>
