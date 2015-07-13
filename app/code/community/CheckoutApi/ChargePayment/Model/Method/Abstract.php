@@ -7,10 +7,10 @@ abstract class CheckoutApi_ChargePayment_Model_Method_Abstract extends Mage_Paym
 	protected $_canRefund = true;
 	protected $_canVoid = true;
 	protected $_canOrder = true;
-    protected $_isInitializeNeeded    = true;
+    protected $_isInitializeNeeded    = false;
 
 
-	private function _placeOrder ( Varien_Object $payment , $amount , $messageSuccess , $extraConfig )
+	protected   function _placeOrder ( Varien_Object $payment , $amount , $messageSuccess , $extraConfig )
 	{
 		/** @var CheckoutApi_Lib_RespondObj $respondCharge */
 
@@ -29,14 +29,14 @@ abstract class CheckoutApi_ChargePayment_Model_Method_Abstract extends Mage_Paym
 				$orderStatus = $this->getConfigData ( 'order_status' );
 				$order->setStatus ( $orderStatus , false );
 
-				$order->addStatusToHistory ( $orderStatus , $messageSuccess . $respondCharge->getId ()
-					. ' and respond code ' . $respondCharge->getResponseCode () , false );
+				$order->addStatusHistoryComment ( $messageSuccess . $respondCharge->getId ()
+                    . ' and respond code ' . $respondCharge->getResponseCode () ,$orderStatus  );
 				$order->save ();
 				$Api = CheckoutApi_Api::getApi(array('mode'=>$this->getConfigData('mode')));
 
 				$chargeUpdated = $Api->updateTrackId($respondCharge, $order->getIncrementId());
 
-				if($respondCharge->getCaptured()){
+                if($respondCharge->getCaptured()){
 					$payment->capture ( null );
 				}
 				$payment->save ();
@@ -52,7 +52,7 @@ abstract class CheckoutApi_ChargePayment_Model_Method_Abstract extends Mage_Paym
 			}
 
 		} else {
-			
+
             $errorDetails = $respondCharge->getMessage ();
 			if ( $this->getDebugFlag () ) {
                 Mage::log( $respondCharge->getExceptionState ()->getErrorMessage (),Zend_Log::DEBUG,'cko.log');
@@ -165,6 +165,7 @@ abstract class CheckoutApi_ChargePayment_Model_Method_Abstract extends Mage_Paym
 		if ( !$this->canCapture () ) {
 			Mage::throwException ( Mage::helper ( 'payment' )->__ ( 'Capture action is not available.' ) );
 		} else {
+
 			if ( !$payment->getLastTransId () ) {
 				$this->_capture ( $payment , $amount );
 			}
@@ -212,17 +213,11 @@ abstract class CheckoutApi_ChargePayment_Model_Method_Abstract extends Mage_Paym
 	}
 
 
-    /**
-     * Instantiate state and set it to state object
-     * @param string $paymentAction
-     * @param Varien_Object
-     */
-    public function initialize($paymentAction, $stateObject)
+
+    public function setPendingState( $payment)
     {
-        $state = Mage_Sales_Model_Order::STATE_PENDING_PAYMENT;
-        $stateObject->setState($state);
-        $stateObject->setStatus('pending_payment');
-        $stateObject->setIsNotified(false);
+        $order = $payment->getOrder ();
+        $order->setStatus ( 'pending_payment' , false );
     }
 
 }

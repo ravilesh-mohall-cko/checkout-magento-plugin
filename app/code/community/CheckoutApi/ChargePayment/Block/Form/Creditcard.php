@@ -186,7 +186,7 @@ class CheckoutApi_ChargePayment_Block_Form_Creditcard  extends Mage_Payment_Bloc
             $paymentTokenReturn['token'] = $paymentToken ;
             $paymentTokenReturn['succes'] = true;
         }else {
-            $paymentTokenCharge->printError();
+          //  $paymentTokenCharge->printError();
         }
 
         if(!$paymentToken) {
