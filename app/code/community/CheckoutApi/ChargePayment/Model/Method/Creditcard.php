@@ -47,7 +47,7 @@ class CheckoutApi_ChargePayment_Model_Method_Creditcard extends CheckoutApi_Char
             'autoCapture' => CheckoutApi_Client_Constant::AUTOCAPUTURE_CAPTURE ,
             'autoCapTime' => $this->getConfigData ( 'auto_capture_time' )
         );
-
+        $this->setPendingState($payment);
         if(!$this->_isRedirect($payment)) {
             $this->_placeOrder($payment, $amount, "Payment has been successfully captured for Transaction ", $extraConfig);
         }
@@ -71,6 +71,7 @@ class CheckoutApi_ChargePayment_Model_Method_Creditcard extends CheckoutApi_Char
                 'autoCapture' => CheckoutApi_Client_Constant::AUTOCAPUTURE_AUTH ,
                 'autoCapTime' => 0
             );
+            $this->setPendingState($payment);
             if(!$this->_isRedirect($payment)) {
                  $this->_placeOrder ( $payment , $amount , "Payment has been successfully authorize for Transaction " , $extraConfig );
             }
