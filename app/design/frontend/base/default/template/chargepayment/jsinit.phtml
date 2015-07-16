@@ -1,27 +1,37 @@
 
 <script type="text/javascript">
-
-
     $buttonCheckout =  null;
+    function bindClickCko() {
+
+        IWD.OPC.Plugin.event('saveOrderBefore', function() {
+            if(!IWD.OPC.ckostatus && IWD.OPC.Shipping.validateShippingMethod()) {
+                IWD.OPC.saveOrderStatus = false;
+                IWD.OPC.ckostatus = true;
+                $('cko-cc-paymenToken').addClassName('required-entry');
+                CheckoutIntegration.open();
+            }else {
+                document.getElementById('cko-cc-paymenToken').value = IWD.OPC.ckoToken;
+            }
+        });
+    }
+
     if(($buttonCheckout = $$('.btn-checkout')).length) {
 
         var eventClick = $buttonCheckout[0].readAttribute('onclick'),
             clickStatus = IWD.OPC.Checkout.disabledSave;
-       <?php if($this->isSelected()): ?>
-                IWD.OPC.Plugin.event('saveOrderBefore', function() {
-                  if(!IWD.OPC.ckostatus && IWD.OPC.Shipping.validateShippingMethod()) {
-                      IWD.OPC.saveOrderStatus = false;
-                      IWD.OPC.ckostatus = true;
-                      $('cko-cc-paymenToken').addClassName('required-entry');
-                      CheckoutIntegration.open();
-                  }else {
-                      document.getElementById('cko-cc-paymenToken').value = IWD.OPC.ckoToken;
-                  }
-                });
-             /*   $buttonCheckout[0].writeAttribute('onclick','CheckoutIntegration.open();IWD.OPC.Checkout' +
-                '.disabledSave' +
-                ' = true;');
-                IWD.OPC.Checkout.disabledSave = true;*/
+
+        document.observe('payment-method:switched',function(event){
+            if(event.memo.method_code == 'creditcard') {
+                bindClickCko();
+            }else {
+                $buttonCheckout[0].writeAttribute('data-clickevent',eventClick);
+            }
+        });
+
+        <?php if($this->isSelected()): ?>
+
+                 bindClickCko();
+
         <?php else: ?>
         IWD.OPC.Plugin.event('saveOrderBefore', function() {
 
@@ -31,6 +41,5 @@
 
 
     }
-
 
 </script>
