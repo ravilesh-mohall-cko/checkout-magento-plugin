@@ -35,5 +35,21 @@ class CheckoutApi_ChargePayment_Model_Observer
 
         }
     }
+
+    public function salesModelServiceQuoteSubmitAfter(Varien_Event_Observer $observer)
+    {
+        $order = $observer->getOrder();
+        $quote = $observer->getQuote();
+        $paymentMethod = $quote->getPayment();
+
+        if($paymentMethod->getMethod()=='creditcard' && $quote->getPayment()->getOrderPlaceRedirectUrl()) {
+          $state = Mage_Sales_Model_Order::STATE_PENDING_PAYMENT;
+
+            $order->setState($state);
+            $order->setStatus('pending_payment');
+            $order->setIsNotified(false);
+            $order->save();
+        }
+    }
 }
 
