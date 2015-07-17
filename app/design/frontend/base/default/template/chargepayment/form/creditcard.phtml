@@ -9,10 +9,16 @@
             publicKey: '<?php echo $this->getPublicKey()?>',
             paymentToken: "<?php echo $tokenRersult['token'] ?>",
             value: '<?php echo $this->getAmount() ?>',
+            logoUrl: '<?php echo $this->getLightBoxUrl() ?>',
+            themeColor: '<?php echo $this->getThemeColor() ?>',
+            buttonColor: '<?php echo $this->getButtonColor() ?>',
+            iconColor: '<?php echo $this->getIconColor() ?>',
+            useCurrencyCode: '<?php echo $this->getUseCurrencyCode() ?>',
             currency: '<?php echo $this->getCurrency() ?>',
             customerEmail: '<?php echo $this->getEmailAddress() ?>',
             customerName: '<?php echo $this->getName()?>',
             paymentMode: 'mixed',
+            forceMobileRedirect: true,
             title: '<?php echo $this->getStoreName(); ?>',
             subtitle:'<?php echo $this->__('Please enter your credit card details') ?>',
             widgetContainerSelector: '.payment-form',
@@ -53,6 +59,15 @@
                 }
                 IWD.OPC.ckostatus = false;
                 IWD.OPC.bindCKO = false;
+
+                if(typeof Checkout !='undefined' && Checkout.hasOwnProperty('render') && Checkout.isMobile()) {
+
+                    document.getElementById('cko-cc-redirectUrl').value = Checkout.getRedirectionUrl();
+                }else   if(typeof CheckoutIntegration !='undefined' && CheckoutIntegration.hasOwnProperty('render') &&  CheckoutIntegration.isMobile()) {
+
+                    document.getElementById('cko-cc-redirectUrl').value = CheckoutIntegration.getRedirectionUrl();
+
+                }
             }
         };
 
@@ -96,6 +111,8 @@
         <li>
             <input type="hidden" name="payment[cko_cc_paymenToken]" id="cko-cc-paymenToken" value="<?php echo
             $this->getPaymentToken() ?>"  class="input-text "/>
+
+            <input type="hidden" name="payment[cko_cc_redirectUrl]" id="cko-cc-redirectUrl" value=""  class="input-text "/>
 
         </li>
     </ul>

@@ -37,6 +37,42 @@ class CheckoutApi_ChargePayment_Block_Form_Creditcard  extends Mage_Payment_Bloc
         return $this->getConfigData('publickey');
     }
 
+    public  function getLightBoxUrl()
+    {
+        return $this->getConfigData('icon_url');
+    }
+
+    public  function getThemeColor()
+    {
+        if($theme = $this->getConfigData('theme_color')) {
+            return '#'.$theme;
+        }
+        return null;
+    }
+
+    public  function getButtonColor()
+    {
+
+        if($button_color = $this->getConfigData('button_color')) {
+            return '#'.$button_color;
+        }
+        return null;
+    }
+
+    public  function getIconColor()
+    {
+
+        if($icon_color = $this->getConfigData('icon_color')) {
+            return '#'.$icon_color;
+        }
+        return null;
+    }
+
+    public  function getUseCurrencyCode()
+    {
+        return $this->getConfigData('use_currency_code')?'true':'false';
+    }
+
     public function getAmount()
     {
         return   $this->_getQuote()->getGrandTotal()*100;
@@ -67,11 +103,11 @@ class CheckoutApi_ChargePayment_Block_Form_Creditcard  extends Mage_Payment_Bloc
     {
 
         $Api = CheckoutApi_Api::getApi(array('mode'=>$this->getConfigData('mode')));
-        $scretKey = $this->getConfigData('privatekey');
+        $secretKey = $this->getConfigData('privatekey');
         $billingAddress = $this->_getQuote()->getBillingAddress();
         $shippingAddress = $this->_getQuote()->getBillingAddress();
         $orderedItems = $this->_getQuote()->getAllItems();
-        $currencyDesc = Mage::app()->getStore()->getCurrentCurrencyCode();
+        $currencyDesc =  Mage::app()->getStore()->getCurrentCurrencyCode();
         $amountCents = $this->getAmount();
         $street = Mage::helper('customer/address')
             ->convertStreetLines($shippingAddress->getStreet(), 2);
@@ -98,7 +134,7 @@ class CheckoutApi_ChargePayment_Block_Form_Creditcard  extends Mage_Payment_Bloc
         }
 
         $config = array();
-        $config['authorization'] = $scretKey  ;
+        $config['authorization'] = $secretKey  ;
         $config['mode'] = $this->getConfigData('mode');
         $config['timeout'] = $this->getConfigData('timeout');
         $street = Mage::helper('customer/address')
@@ -117,10 +153,15 @@ class CheckoutApi_ChargePayment_Block_Form_Creditcard  extends Mage_Payment_Bloc
             "chargeMode"        =>    1,
             'currency'          =>    $currencyDesc,
             'shippingDetails'   =>    $shippingAddressConfig,
-            'products'          =>    $products
+            'products'          =>    $products,
+            'metadata'          =>   array(
+                                        'server'  => Mage::helper('core/http')->getHttpUserAgent(),
+                                        'quoteId' => $this->_getQuote()->getId()
+
+            )
         );
 
-        if($this->getConfigData('order_status_capture') == Mage_Paygate_Model_Authorizenet::ACTION_AUTHORIZE ) {
+        if($this->getConfigData('payment_action') == Mage_Paygate_Model_Authorizenet::ACTION_AUTHORIZE ) {
             $config['postedParam']['autoCapture']  = CheckoutApi_Client_Constant::AUTOCAPUTURE_AUTH;
             $config['postedParam']['autoCapTime']  = 0;
         } else {

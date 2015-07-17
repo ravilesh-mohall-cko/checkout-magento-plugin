@@ -15,31 +15,42 @@
         });
     }
 
-    if(($buttonCheckout = $$('.btn-checkout')).length) {
 
-        var eventClick = $buttonCheckout[0].readAttribute('onclick'),
-            clickStatus = IWD.OPC.Checkout.disabledSave;
+    var isMobile = false;
 
-        document.observe('payment-method:switched',function(event){
-            if(event.memo.method_code == 'creditcard') {
-                bindClickCko();
-            }else {
-                $buttonCheckout[0].writeAttribute('data-clickevent',eventClick);
-            }
-        });
-
-        <?php if($this->isSelected()): ?>
-
-                 bindClickCko();
-
-        <?php else: ?>
-        IWD.OPC.Plugin.event('saveOrderBefore', function() {
-
-        });
-        <?php endif; ?>
-        $buttonCheckout[0].writeAttribute('data-clickevent',eventClick);
-
-
+    if((typeof Checkout !='undefined' && Checkout.hasOwnProperty('render') && Checkout.isMobile()) ||
+        (typeof CheckoutIntegration !='undefined' && CheckoutIntegration.hasOwnProperty('render') &&  CheckoutIntegration.isMobile())
+    )  {
+        isMobile = true
     }
+
+ if(!isMobile) {
+     if (($buttonCheckout = $$('.btn-checkout')).length) {
+
+         var eventClick = $buttonCheckout[0].readAttribute('onclick'),
+             clickStatus = IWD.OPC.Checkout.disabledSave;
+
+         document.observe('payment-method:switched', function (event) {
+             if (event.memo.method_code == 'creditcard') {
+                 bindClickCko();
+             } else {
+                 $buttonCheckout[0].writeAttribute('data-clickevent', eventClick);
+             }
+         });
+
+         <?php if($this->isSelected()): ?>
+
+         bindClickCko();
+
+         <?php else: ?>
+         IWD.OPC.Plugin.event('saveOrderBefore', function () {
+
+         });
+         <?php endif; ?>
+         $buttonCheckout[0].writeAttribute('data-clickevent', eventClick);
+
+
+     }
+ }
 
 </script>
