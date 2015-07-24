@@ -4,7 +4,7 @@
             <active>true</active>
             <codePool>community</codePool>
             <depends><Mage_Payment/></depends>
-            <depends><Idev_OneStepCheckout/></depends>
+            <depends><Magik_Onestepcheckout/></depends>
         </CheckoutApi_ChargePayment>
     </modules>
 

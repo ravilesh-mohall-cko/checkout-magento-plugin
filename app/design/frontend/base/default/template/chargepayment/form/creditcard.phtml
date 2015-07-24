@@ -25,7 +25,7 @@
             widgetContainerSelector: '.payment-form',
             cardCharged: function(event){
                 document.getElementById('cko-cc-paymenToken').value = event.data.paymentToken;
-                fireEvent($('onestepcheckout-place-order'), 'click');
+                fireEvent($$('#review-buttons-container .btn-checkout')[0], 'click');
 
 
             },
@@ -82,21 +82,26 @@
 
     Validation.add('required-bridge-entry' ,'<?php echo $this->__("Please wait while we load you secure form") ?>', function(value){
         var form = new VarienForm('onestepcheckout-form'),
-            useTitles = form.validator.options.useTitles,
-            callback = form.validator.options.onElementValidate,
+
             result = true;
-        Form.getElements(form.form).collect(function(elm) {
-            if (elm.hasClassName('local-validation') && !this.isElementInForm(elm, this.form)) {
-                return true;
-            }
-            if(elm.id!='cko-cc-paymenToken') {
 
-                if (!Validation.validate(elm, {useTitle: useTitles, onElementValidate: callback})) {
+        if(form.form!=null) {
+            var useTitles = form.validator.options.useTitles,
+                callback = form.validator.options.onElementValidate;
 
-                    result = false;
+            Form.getElements(form.form).collect(function(elm) {
+                if (elm.hasClassName('local-validation') && !this.isElementInForm(elm, this.form)) {
+                    return true;
                 }
-            }
-        });
+                if(elm.id!='cko-cc-paymenToken') {
+
+                    if (!Validation.validate(elm, {useTitle: useTitles, onElementValidate: callback})) {
+
+                        result = false;
+                    }
+                }
+            });
+        }
 
 
         if($$('[name="payment\[method\]"]:checked')[0].id=='p_method_creditcard' && value==-1  && result) {
