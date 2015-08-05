@@ -1,6 +1,18 @@
+<?php $tokenResult = $this->getPaymentTokenResult(); ?>
 
 <script type="text/javascript">
     $buttonCheckout =  null;
+    <?php if($tokenResult['success']): ?>
+        var paymentToken = "<?php echo $tokenResult['token'] ?>";
+            if(window.CKOConfig) {
+                window.CKOConfig.value = '<?php echo $tokenResult['value'] ?>';
+                 window.CKOConfig.paymentToken = paymentToken;
+                CheckoutIntegration.configure(window.CKOConfig);
+                CheckoutIntegration.render();
+            }
+
+    <?php endif; ?>
+
     function bindClickCko() {
 
         IWD.OPC.Plugin.event('saveOrderBefore', function() {
