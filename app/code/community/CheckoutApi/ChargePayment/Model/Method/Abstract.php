@@ -15,24 +15,43 @@ abstract class CheckoutApi_ChargePayment_Model_Method_Abstract extends Mage_Paym
 		/** @var CheckoutApi_Lib_RespondObj $respondCharge */
 
 		$respondCharge = $this->_createCharge ( $payment , $amount , $extraConfig );
+        
 		$this->_debug ( $respondCharge );
+        /** @var Mage_Sales_Model_Order_Payment_Transaction $payment */
+		/** @var Mage_Sales_Model_Order $order */
+		$order = $payment->getOrder ();
+        $quote = Mage::getModel('checkout/session')->getQuote();
+        $Api = CheckoutApi_Api::getApi(array('mode'=>$this->getConfigData('mode')));
+        $toValidate = array(
+          'currency' => $order->getOrderCurrencyCode(),
+          'value'    => $Api->valueToDecimal($quote->getGrandTotal(), $order->getOrderCurrencyCode()),
+        );
+        
+        $validateRequest = $Api::validateRequest($toValidate,$respondCharge);
 		if ( $respondCharge->isValid () ) {
 
 			if ( preg_match ( '/^1[0-9]+$/' , $respondCharge->getResponseCode () ) ) {
-				/** @var Mage_Sales_Model_Order_Payment_Transaction $payment */
-				/** @var Mage_Sales_Model_Order $order */
-				$order = $payment->getOrder ();
+
 				$payment->setTransactionId ( $respondCharge->getId () );
 				$rawInfo = $respondCharge->toArray ();
 				$payment->setAdditionalInformation ( 'rawrespond' , $rawInfo );
 				$payment->setTransactionAdditionalInfo ( Mage_Sales_Model_Order_Payment_Transaction::RAW_DETAILS , $rawInfo );
+                $paymentMethod = $respondCharge->getCard()->getPaymentMethod();
+                $cctype = $this->_getCcCodeType($paymentMethod);
+                $payment->setCcType($cctype);
 				$orderStatus = $this->getConfigData ( 'order_status' );
 				$order->setStatus ( $orderStatus , false );
 
 				$order->addStatusToHistory ( $orderStatus , $messageSuccess . $respondCharge->getId ()
 					. ' and respond code ' . $respondCharge->getResponseCode () , false );
+                
+                if(!$validateRequest['status']){  
+                      foreach($validateRequest['message'] as $errormessage){
+                        $order->addStatusToHistory ( $orderStatus , $errormessage , false );
+                      }
+                }
 				$order->save ();
-				$Api = CheckoutApi_Api::getApi(array('mode'=>$this->getConfigData('mode')));
+
 
 				$chargeUpdated = $Api->updateTrackId($respondCharge, $order->getIncrementId());
 
@@ -83,7 +102,8 @@ abstract class CheckoutApi_ChargePayment_Model_Method_Abstract extends Mage_Paym
 		$orderedItems = $order->getAllItems ();
 		$currencyDesc = $order->getBaseCurrencyCode ();
 		$orderId = $order->getIncrementId ();
-		$amountCents = $amount * 100;
+        $Api = CheckoutApi_Api::getApi(array('mode'=>$this->getConfigData('mode')));
+		$amountCents = $Api->valueToDecimal($amount, $currencyDesc);
 		$street = Mage::helper ( 'customer/address' )
 			->convertStreetLines ( $billingAddress->getStreet () , 2 );
 		$billingAddressConfig = array (

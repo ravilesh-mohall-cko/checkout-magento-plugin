@@ -1,4 +1,4 @@
-<?php $tokenRersult = $this->getPaymentTokenResult(); ?>
+<?php $tokenRersult = $this->getPaymentTokenResult($orderid = null); ?>
 <?php if($tokenRersult['succes']): ?>
     <script type="text/javascript">
         var reload = false;
@@ -8,7 +8,7 @@
             namespace: 'CheckoutIntegration',
             publicKey: '<?php echo $this->getPublicKey()?>',
             paymentToken: "<?php echo $tokenRersult['token'] ?>",
-            value: '<?php echo $this->getAmount() ?>',
+            value: '<?php echo $this->getConvertAmount() ?>',
             logoUrl: '<?php echo $this->getLightBoxUrl() ?>',
             themeColor: '<?php echo $this->getThemeColor() ?>',
             buttonColor: '<?php echo $this->getButtonColor() ?>',

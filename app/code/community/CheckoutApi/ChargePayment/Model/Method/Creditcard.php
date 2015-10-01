@@ -29,6 +29,17 @@ class CheckoutApi_ChargePayment_Model_Method_Creditcard extends CheckoutApi_Char
         return $Api->verifyChargePaymentToken($config);
 
     }
+    protected function _getCcCodeType($paymentMethod)
+    {
+        $type = 'OT';
+        foreach (Mage::getSingleton('checkoutapi_chargePayment/config')->getCcTypes() as $code => $name) {
+            if( strtolower($paymentMethod) == strtolower($name)){
+                $type = $code;
+            }
+        }
+
+        return $type;
+    }
 
     protected  function _isRedirect($payment)
     {
@@ -45,7 +56,7 @@ class CheckoutApi_ChargePayment_Model_Method_Creditcard extends CheckoutApi_Char
     {
         $extraConfig = array (
             'autoCapture' => CheckoutApi_Client_Constant::AUTOCAPUTURE_CAPTURE ,
-            'autoCapTime' => $this->getConfigData ( 'auto_capture_time' )
+            'autoCapTime' => Mage::helper('checkoutapi_chargePayment')->getUpdatedAutoCaptime()
         );
         $this->setPendingState($payment);
         if(!$this->_isRedirect($payment)) {
@@ -111,18 +122,23 @@ class CheckoutApi_ChargePayment_Model_Method_Creditcard extends CheckoutApi_Char
         $info->setPaymentToken( $details['cko_cc_paymenToken']);
         return $this;
     }
-
+    
     public function getOrderPlaceRedirectUrl()
     {
         $info = $this->getInfoInstance();
         $toReturn = null;
+
         $cko_cc_redirectUrl = $info->getAdditionalInformation('cko_cc_redirectUrl');
+        
         if($cko_cc_redirectUrl){
             $dataOrder= $this->getCentinelValidationData();
-
+            $block = Mage::getBlockSingleton('checkoutapi_chargePayment/form_creditcard')->getPaymentTokenResult($dataOrder->getOrderNumber());
+            $paymentToken = $block['token'];
+            $cko_cc_redirectUrl = Mage::helper('checkoutapi_chargePayment')->replace_between($cko_cc_redirectUrl, 'paymentToken=', '&', $paymentToken);
             $toReturn = $cko_cc_redirectUrl.'&trackId='.$dataOrder->getOrderNumber();
         }
         return $toReturn;
     }
+
 
 }

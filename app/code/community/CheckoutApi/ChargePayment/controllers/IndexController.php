@@ -172,7 +172,7 @@ class CheckoutApi_ChargePayment_IndexController extends Mage_Core_Controller_Fro
     public  function callbackAction()
     {
         $postedVal = $this->getRequest()->getParams();
-        if(!empty($postedVal) && isset($postedVal['cko-payment-token']) && isset($postedVal['cko-track-id'])) {
+        if(!empty($postedVal) && isset($postedVal['cko-payment-token'])) {
             $order_id  = $postedVal['cko-track-id'];
             $paymentToken  = $postedVal['cko-payment-token'];
             $storeId = Mage::app ()->getStore ()->getId ();
@@ -181,12 +181,18 @@ class CheckoutApi_ChargePayment_IndexController extends Mage_Core_Controller_Fro
             $config['paymentToken'] = $paymentToken;
             $config['authorization'] = $this->_requesttConfigData('privatekey');
             $chargeObject = $Api->verifyChargePaymentToken($config);
+            $order_id = $postedVal['cko-track-id'];
+            if($chargeObject->getTrackId()){
+              $order_id = $chargeObject->getTrackId();
+            } 
             $_order = Mage::getModel('sales/order')->loadByIncrementId($order_id);
+           
             $_payment = $_order->getPayment();
             $chargeUpdated = $Api->updateTrackId($chargeObject, $order_id);
             if($chargeObject->isValid()) {
                 $chargeId = $chargeObject->getId();
                 if ($chargeObject->getStatus() == 'Authorised' || $chargeObject->getStatus() == 'Flagged') {
+                  $_payment->setTransactionId($chargeId);
                     $_payment->setParentTransactionId($chargeId);
                     $_payment->authorize ( true,$_order->getBaseTotalDue() );
                     $orderStatus = $this->_requesttConfigData ( 'order_status' );
@@ -196,10 +202,14 @@ class CheckoutApi_ChargePayment_IndexController extends Mage_Core_Controller_Fro
                         ->setIsTransactionClosed(0)
                         ->setTransactionAdditionalInfo ( Mage_Sales_Model_Order_Payment_Transaction
                         ::RAW_DETAILS , $_rawInfo );
+                    $paymentMethod = $chargeObject->getCard()->getPaymentMethod();
+                    $cctype = $this->_getCcCodeType($paymentMethod);
+                    $_payment->setCcType($cctype);
                     $_payment->save();
                     $_order->setStatus ( $orderStatus , false );
                     $_order->addStatusToHistory ( $orderStatus , 'Payment successfully '.$chargeObject->getStatus().'
                     with Transaction ID ' . $chargeObject->getId () );
+
                     $_order->save ();
                     $this->getResponse()->setBody('Payment successfully '.$chargeObject->getStatus().'
                                 with Transaction ID '.$chargeObject->getId());
@@ -213,6 +223,18 @@ class CheckoutApi_ChargePayment_IndexController extends Mage_Core_Controller_Fro
             }// end is valid
         }//end if posted empty
 
+    }
+    
+    protected function _getCcCodeType($paymentMethod)
+    {
+        $type = 'OT';
+        foreach (Mage::getSingleton('checkoutapi_chargePayment/config')->getCcTypes() as $code => $name) {
+            if( strtolower($paymentMethod) == strtolower($name)){
+                $type = $code;
+            }
+        }
+
+        return $type;
     }
 
 }
