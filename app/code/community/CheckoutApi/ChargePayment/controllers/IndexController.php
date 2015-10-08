@@ -173,7 +173,7 @@ class CheckoutApi_ChargePayment_IndexController extends Mage_Core_Controller_Fro
     {
         $postedVal = $this->getRequest()->getParams();
         if(!empty($postedVal) && isset($postedVal['cko-payment-token'])) {
-            $order_id  = $postedVal['cko-track-id'];
+
             $paymentToken  = $postedVal['cko-payment-token'];
             $storeId = Mage::app ()->getStore ()->getId ();
 
@@ -181,12 +181,10 @@ class CheckoutApi_ChargePayment_IndexController extends Mage_Core_Controller_Fro
             $config['paymentToken'] = $paymentToken;
             $config['authorization'] = $this->_requesttConfigData('privatekey');
             $chargeObject = $Api->verifyChargePaymentToken($config);
-            $order_id = $postedVal['cko-track-id'];
-            if($chargeObject->getTrackId()){
+            if($chargeObject->getTrackId()) {
               $order_id = $chargeObject->getTrackId();
             } 
             $_order = Mage::getModel('sales/order')->loadByIncrementId($order_id);
-           
             $_payment = $_order->getPayment();
             $chargeUpdated = $Api->updateTrackId($chargeObject, $order_id);
             if($chargeObject->isValid()) {

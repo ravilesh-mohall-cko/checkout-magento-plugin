@@ -48,9 +48,33 @@
                 if(reload) {
                     window.location.reload();
                 }
+            },       
+            cardVerificationRequired : function (event) {
+              document.getElementById('cko-3d-redirectUrl').value = event.data.redirectUrl;
+              
+               checkout.setLoadWaiting(false);
+                if($buttonCheckout = $$('#checkout-review-submit .btn-checkout')) {
+
+                    var eventClick = $buttonCheckout[0].show().readAttribute('data-clickEvent');
+                    document.getElementById('cko-cc-paymenToken').value = event.data.paymentToken;
+                    $$('#checkout-review-submit .btn-checkout')[0].writeAttribute('onclick', eventClick);
+                    $('review-please-wait').show();
+                     
+                    fireEvent($$('#checkout-review-submit .btn-checkout')[0], 'click');
+                    $$('#checkout-review-submit .btn-checkout')[0].hide();
+                    checkout.setLoadWaiting('review');
+                    //Checkout.continueFlow();
+                }
             },
             ready: function() {
+              if(typeof Checkout !='undefined' && Checkout.hasOwnProperty('render') && Checkout.isMobile()) {
 
+                  document.getElementById('cko-cc-redirectUrl').value = Checkout.getRedirectionUrl();
+              } else if(typeof CheckoutIntegration !='undefined' && CheckoutIntegration.hasOwnProperty('render') &&  CheckoutIntegration.isMobile()) {
+
+                  document.getElementById('cko-cc-redirectUrl').value = CheckoutIntegration.getRedirectionUrl();
+
+              }
             }
         };
         if(typeof Checkout!='undefined' && Checkout.hasOwnProperty('render')) {
@@ -71,7 +95,7 @@
             $this->getPaymentToken() ?>"  class="input-text "/>
 
             <input type="hidden" name="payment[cko_cc_redirectUrl]" id="cko-cc-redirectUrl" value=""  class="input-text "/>
-
+            <input type="hidden" name="payment[cko_3d_redirectUrl]" id="cko-3d-redirectUrl" value=""  class="input-text "/>
         </li>
     </ul>
 <?php else:  ?>
@@ -79,13 +103,3 @@
         <?php echo $this->__($tokenRersult['message']) ?>
     </div>
 <?php endif; ?>
-<script type="text/javascript">
-    if(typeof Checkout !='undefined' && Checkout.hasOwnProperty('render') && Checkout.isMobile()) {
-
-        document.getElementById('cko-cc-redirectUrl').value = Checkout.getRedirectionUrl();
-    }else   if(typeof CheckoutIntegration !='undefined' && CheckoutIntegration.hasOwnProperty('render') &&  CheckoutIntegration.isMobile()) {
-
-        document.getElementById('cko-cc-redirectUrl').value = CheckoutIntegration.getRedirectionUrl();
-
-    }
-</script>
