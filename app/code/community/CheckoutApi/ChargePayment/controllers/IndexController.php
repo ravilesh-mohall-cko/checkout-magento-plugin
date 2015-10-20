@@ -172,8 +172,12 @@ class CheckoutApi_ChargePayment_IndexController extends Mage_Core_Controller_Fro
     public  function callbackAction()
     {
         $postedVal = $this->getRequest()->getParams();
+        
         if(!empty($postedVal) && isset($postedVal['cko-payment-token'])) {
-
+            if(!preg_match ('/^1[0-9]+$/' , $postedVal['responseCode'])){
+              $this->_redirect('checkout/onepage', array('_secure'=>true));
+              return $this->_redirect('checkout/onepage', array('_secure'=>true));
+            }
             $paymentToken  = $postedVal['cko-payment-token'];
             $storeId = Mage::app ()->getStore ()->getId ();
 
@@ -181,13 +185,14 @@ class CheckoutApi_ChargePayment_IndexController extends Mage_Core_Controller_Fro
             $config['paymentToken'] = $paymentToken;
             $config['authorization'] = $this->_requesttConfigData('privatekey');
             $chargeObject = $Api->verifyChargePaymentToken($config);
-            if($chargeObject->getTrackId()) {
+            if($chargeObject->getTrackId()){
               $order_id = $chargeObject->getTrackId();
             } 
             $_order = Mage::getModel('sales/order')->loadByIncrementId($order_id);
             $_payment = $_order->getPayment();
             $chargeUpdated = $Api->updateTrackId($chargeObject, $order_id);
             if($chargeObject->isValid()) {
+
                 $chargeId = $chargeObject->getId();
                 if ($chargeObject->getStatus() == 'Authorised' || $chargeObject->getStatus() == 'Flagged') {
                   $_payment->setTransactionId($chargeId);
@@ -215,8 +220,20 @@ class CheckoutApi_ChargePayment_IndexController extends Mage_Core_Controller_Fro
 
                 }elseif($chargeObject->getStatus() == 'Voided'  ) {
 
-                }elseif($chargeObject->getStatus() == 'Decline') {
+                }elseif($chargeObject->getStatus() == 'Declined') {
 
+                }elseif($chargeObject->getStatus() == 'Pending' &&  $chargeObject->getChargeMode() == 3){
+                  $orderStatus = $this->_requesttConfigData ( 'order_status_capture' );
+                  if($_order->getStatus()!= 'canceled' || $_order->getStatus()!= $orderStatus){
+                    $_order->setStatus ( 'pending' , false );
+                  }
+                  $_payment->setTransactionId($chargeId);
+                  $_payment->setParentTransactionId($chargeId);
+                  $_payment->authorize ( true,$_order->getBaseTotalDue() );
+                  $_payment->save();
+                  $_order->save ();
+                  $this->_redirect('checkout/onepage/success', array('_secure'=>true));
+  
                 }
             }// end is valid
         }//end if posted empty

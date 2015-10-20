@@ -43,10 +43,11 @@ class CheckoutApi_ChargePayment_Model_Method_Creditcard extends CheckoutApi_Char
 
     protected  function _isRedirect($payment)
     {
-        $cko_cc_redirectUrl = $payment->getAdditionalInformation('cko_cc_redirectUrl');
+        $cko_redirectUrl = $payment->getAdditionalInformation('cko_redirectUrl');
+        $cko_lp_redirectUrl = $payment->getAdditionalInformation('cko_lp_redirectUrl');
         $cko_3d_redirectUrl = $payment->getAdditionalInformation('cko_3d_redirectUrl');
 
-        if($cko_cc_redirectUrl || $cko_3d_redirectUrl) {
+        if($cko_redirectUrl || $cko_3d_redirectUrl || $cko_lp_redirectUrl) {
             return true;
         }
         return false;
@@ -115,10 +116,12 @@ class CheckoutApi_ChargePayment_Model_Method_Creditcard extends CheckoutApi_Char
         parent::assignData($data);
         $info = $this->getInfoInstance();
         $details['cko_cc_paymenToken'] = $data->getData('cko_cc_paymenToken');
-        $details['cko_cc_redirectUrl'] = $data->getData('cko_cc_redirectUrl');
+        $details['cko_redirectUrl'] = $data->getData('cko_redirectUrl');
+        $details['cko_lp_redirectUrl'] = $data->getData('cko_lp_redirectUrl');
         $details['cko_3d_redirectUrl'] = $data->getData('cko_3d_redirectUrl');
         $info->setAdditionalInformation('cko_cc_paymenToken',$details['cko_cc_paymenToken']);
-        $info->setAdditionalInformation('cko_cc_redirectUrl',$details['cko_cc_redirectUrl']);
+        $info->setAdditionalInformation('cko_redirectUrl',$details['cko_redirectUrl']);
+        $info->setAdditionalInformation('cko_lp_redirectUrl',$details['cko_lp_redirectUrl']);
         $info->setAdditionalInformation('cko_3d_redirectUrl',$details['cko_3d_redirectUrl']);
         $info->setAdditionalData(serialize($details));
         $info->setPaymentToken( $details['cko_cc_paymenToken']);
@@ -130,26 +133,35 @@ class CheckoutApi_ChargePayment_Model_Method_Creditcard extends CheckoutApi_Char
         $info = $this->getInfoInstance();
         $toReturn = null;
 
-        $cko_cc_redirectUrl = $info->getAdditionalInformation('cko_cc_redirectUrl');
+        $cko_redirectUrl = $info->getAdditionalInformation('cko_redirectUrl');
+        $cko_lp_redirectUrl = $info->getAdditionalInformation('cko_lp_redirectUrl');
         $cko_3d_redirectUrl = $info->getAdditionalInformation('cko_3d_redirectUrl');
         $Api = CheckoutApi_Api::getApi(array('mode'=>$this->getConfigData('mode')));
-        
-        if($cko_cc_redirectUrl){
+        $config['authorization'] = $this->getConfigData('privatekey');
+        if($cko_redirectUrl){
             $dataOrder= $this->getCentinelValidationData();
             
             $block = Mage::getBlockSingleton('checkoutapi_chargePayment/form_creditcard')->getPaymentTokenResult($dataOrder->getOrderNumber());
             $paymentToken = $block['token'];
             
-            $cko_cc_redirectUrl = Mage::helper('checkoutapi_chargePayment')->replace_between($cko_cc_redirectUrl, 'paymentToken=', '&', $paymentToken);
-            $toReturn = $cko_cc_redirectUrl.'&trackId='.$dataOrder->getOrderNumber();
+            $cko_redirectUrl = Mage::helper('checkoutapi_chargePayment')->replace_between($cko_redirectUrl, 'paymentToken=', '&', $paymentToken);
+            $toReturn = $cko_redirectUrl.'&trackId='.$dataOrder->getOrderNumber();
         }
         if ($cko_3d_redirectUrl){
           $dataOrder = $this->getCentinelValidationData();
           $config['paymentToken'] = $info->getAdditionalInformation('cko_cc_paymenToken');
-          $config['authorization'] = $this->getConfigData('privatekey');
           $chargeResponse  = $Api->verifyChargePaymentToken($config);
           $chargeUpdated = $Api->updateTrackId($chargeResponse, $dataOrder->getOrderNumber());
           $toReturn = $cko_3d_redirectUrl;
+        }
+        if($cko_lp_redirectUrl){
+          $urlArray = explode("=",$cko_lp_redirectUrl);
+          $paymentToken = $urlArray[1];
+          $dataOrder = $this->getCentinelValidationData();
+          $config['paymentToken'] = $paymentToken;
+          $chargeResponse  = $Api->verifyChargePaymentToken($config);
+          $chargeUpdated = $Api->updateTrackId($chargeResponse, $dataOrder->getOrderNumber());
+          $toReturn = $cko_lp_redirectUrl;
         }
 
         return $toReturn;

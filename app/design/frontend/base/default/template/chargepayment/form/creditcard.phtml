@@ -2,13 +2,18 @@
 <?php if($tokenRersult['succes']): ?>
     <script type="text/javascript">
         var reload = false;
+        var loading = false;
         window.CKOConfig = {
-            debugMode: false,
+            debugMode: true,
             renderMode: 2,
             namespace: 'CheckoutIntegration',
             publicKey: '<?php echo $this->getPublicKey()?>',
             paymentToken: "<?php echo $tokenRersult['token'] ?>",
             value: '<?php echo $this->getConvertAmount() ?>',
+            logoUrl: '<?php echo $this->getLightBoxUrl() ?>',
+            themeColor: '<?php echo $this->getThemeColor() ?>',
+            buttonColor: '<?php echo $this->getButtonColor() ?>',
+            iconColor: '<?php echo $this->getIconColor() ?>',
             useCurrencyCode: '<?php echo $this->getUseCurrencyCode() ?>',
             currency: '<?php echo $this->getCurrency() ?>',
             customerEmail: '<?php echo $this->getEmailAddress() ?>',
@@ -18,12 +23,6 @@
             title: '<?php echo $this->getStoreName(); ?>',
             subtitle:'<?php echo $this->__('Please enter your credit card details') ?>',
             widgetContainerSelector: '.payment-form',
-            styling: {
-                themeColor: '<?php echo $this->getThemeColor() ?>',
-                buttonColor: '<?php echo $this->getButtonColor() ?>',
-                logoUrl: '<?php echo $this->getLightBoxUrl() ?>',
-                iconColor: '<?php echo $this->getIconColor() ?>',
-            },
             cardCharged: function(event){
                 checkout.setLoadWaiting(false);
                 if($buttonCheckout = $$('#checkout-review-submit .btn-checkout')) {
@@ -45,6 +44,9 @@
             },
             lightboxDeactivated: function() {
                 checkout.setLoadWaiting(false);
+                if(loading){
+                   $('review-please-wait').show();
+                }
                 if(reload) {
                     window.location.reload();
                 }
@@ -69,13 +71,27 @@
             ready: function() {
               if(typeof Checkout !='undefined' && Checkout.hasOwnProperty('render') && Checkout.isMobile()) {
 
-                  document.getElementById('cko-cc-redirectUrl').value = Checkout.getRedirectionUrl();
+                  document.getElementById('cko-redirectUrl').value = Checkout.getRedirectionUrl();
               } else if(typeof CheckoutIntegration !='undefined' && CheckoutIntegration.hasOwnProperty('render') &&  CheckoutIntegration.isMobile()) {
 
-                  document.getElementById('cko-cc-redirectUrl').value = CheckoutIntegration.getRedirectionUrl();
+                  document.getElementById('cko-redirectUrl').value = CheckoutIntegration.getRedirectionUrl();
 
               }
-            }
+            },
+            lpCharged: function(event){
+                loading = true;
+                checkout.setLoadWaiting(false);
+                if($buttonCheckout = $$('#checkout-review-submit .btn-checkout')) {
+                    var eventClick = $buttonCheckout[0].show().readAttribute('data-clickEvent');
+                    document.getElementById('cko-lp-redirectUrl').value = event.data.redirectUrl;
+                    $$('#checkout-review-submit .btn-checkout')[0].writeAttribute('onclick', eventClick);
+                    fireEvent($$('#checkout-review-submit .btn-checkout')[0], 'click');
+                    $$('#checkout-review-submit .btn-checkout')[0].hide();
+                    checkout.setLoadWaiting('review');
+
+                }
+                
+            },
         };
         if(typeof Checkout!='undefined' && Checkout.hasOwnProperty('render')) {
             Checkout.render(window.CKOConfig);
@@ -94,7 +110,8 @@
             <input type="hidden" name="payment[cko_cc_paymenToken]" id="cko-cc-paymenToken" value="<?php echo
             $this->getPaymentToken() ?>"  class="input-text "/>
 
-            <input type="hidden" name="payment[cko_cc_redirectUrl]" id="cko-cc-redirectUrl" value=""  class="input-text "/>
+            <input type="hidden" name="payment[cko_redirectUrl]" id="cko-redirectUrl" value=""  class="input-text "/>
+            <input type="hidden" name="payment[cko_lp_redirectUrl]" id="cko-lp-redirectUrl" value=""  class="input-text "/>
             <input type="hidden" name="payment[cko_3d_redirectUrl]" id="cko-3d-redirectUrl" value=""  class="input-text "/>
         </li>
     </ul>
