@@ -10,10 +10,6 @@
             publicKey: '<?php echo $this->getPublicKey()?>',
             paymentToken: "<?php echo $tokenRersult['token'] ?>",
             value: '<?php echo $this->getConvertAmount() ?>',
-            logoUrl: '<?php echo $this->getLightBoxUrl() ?>',
-            themeColor: '<?php echo $this->getThemeColor() ?>',
-            buttonColor: '<?php echo $this->getButtonColor() ?>',
-            iconColor: '<?php echo $this->getIconColor() ?>',
             useCurrencyCode: '<?php echo $this->getUseCurrencyCode() ?>',
             currency: '<?php echo $this->getCurrency() ?>',
             customerEmail: '<?php echo $this->getEmailAddress() ?>',
@@ -23,6 +19,12 @@
             title: '<?php echo $this->getStoreName(); ?>',
             subtitle:'<?php echo $this->__('Please enter your credit card details') ?>',
             widgetContainerSelector: '.payment-form',
+            styling: {
+              logoUrl: '<?php echo $this->getLightBoxUrl() ?>',
+              themeColor: '<?php echo $this->getThemeColor() ?>',
+              buttonColor: '<?php echo $this->getButtonColor() ?>',
+              iconColor: '<?php echo $this->getIconColor() ?>',
+            },
             cardCharged: function(event){
                 checkout.setLoadWaiting(false);
                 if($buttonCheckout = $$('#checkout-review-submit .btn-checkout')) {

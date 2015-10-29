@@ -57,7 +57,7 @@ class CheckoutApi_ChargePayment_Model_Method_Creditcard extends CheckoutApi_Char
     {
         $extraConfig = array (
             'autoCapture' => CheckoutApi_Client_Constant::AUTOCAPUTURE_CAPTURE ,
-            'autoCapTime' => Mage::helper('checkoutapi_chargePayment')->getUpdatedAutoCaptime()
+            'autoCapTime' => $this->getConfigData ( 'auto_capture_time' )
         );
         $this->setPendingState($payment);
         if(!$this->_isRedirect($payment)) {
