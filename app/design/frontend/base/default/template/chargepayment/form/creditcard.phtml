@@ -26,6 +26,7 @@
               iconColor: '<?php echo $this->getIconColor() ?>',
             },
             cardCharged: function(event){
+                loading = true;
                 checkout.setLoadWaiting(false);
                 if($buttonCheckout = $$('#checkout-review-submit .btn-checkout')) {
 
@@ -55,7 +56,7 @@
             },       
             cardVerificationRequired : function (event) {
               document.getElementById('cko-3d-redirectUrl').value = event.data.redirectUrl;
-              
+              loading = true;
                checkout.setLoadWaiting(false);
                 if($buttonCheckout = $$('#checkout-review-submit .btn-checkout')) {
 

@@ -174,8 +174,7 @@ class CheckoutApi_ChargePayment_IndexController extends Mage_Core_Controller_Fro
         $postedVal = $this->getRequest()->getParams();
         
         if(!empty($postedVal) && isset($postedVal['cko-payment-token'])) {
-            if(!preg_match ('/^1[0-9]+$/' , $postedVal['responseCode'])){
-              $this->_redirect('checkout/onepage', array('_secure'=>true));
+            if(isset($postedVal['responseCode']) && !preg_match ('/^1[0-9]+$/' , $postedVal['responseCode'])){
               return $this->_redirect('checkout/onepage', array('_secure'=>true));
             }
             $paymentToken  = $postedVal['cko-payment-token'];
