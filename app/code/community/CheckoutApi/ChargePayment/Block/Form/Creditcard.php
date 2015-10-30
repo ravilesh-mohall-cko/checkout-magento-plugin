@@ -188,7 +188,7 @@ class CheckoutApi_ChargePayment_Block_Form_Creditcard  extends Mage_Payment_Bloc
             )
         );
 
-        if($this->getConfigData('order_status_capture') == Mage_Paygate_Model_Authorizenet::ACTION_AUTHORIZE ) {
+         if($this->getConfigData('payment_action') == 'authorize' ) {
             $config['postedParam']['autoCapture']  = CheckoutApi_Client_Constant::AUTOCAPUTURE_AUTH;
             $config['postedParam']['autoCapTime']  = 0;
         } else {
@@ -207,7 +207,7 @@ class CheckoutApi_ChargePayment_Block_Form_Creditcard  extends Mage_Payment_Bloc
             $paymentTokenReturn['token'] = $paymentToken ;
             $paymentTokenReturn['succes'] = true;
         }else {
-            $paymentTokenCharge->printError();
+            //$paymentTokenCharge->printError();
         }
 
         if(!$paymentToken) {
