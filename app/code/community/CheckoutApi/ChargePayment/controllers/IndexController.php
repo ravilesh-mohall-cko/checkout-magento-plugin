@@ -26,13 +26,27 @@ class CheckoutApi_ChargePayment_IndexController extends Mage_Core_Controller_Fro
 
 		if($stringCharge) {
 
-			$Api    =    CheckoutApi_Api::getApi(array('mode'=>$this->_requesttConfigData('mode')));
+			$Api    =    CheckoutApi_Api::getApi(array('mode'=>$this->_requesttConfigData('mode'),'authorization'=>$this->_requesttConfigData('privatekey')));
 			$objectCharge = $Api->chargeToObj($stringCharge);
 
 			if($chargeId = $objectCharge->getId()) {
 				/** @var Mage_Sales_Model_Resource_Order_Payment_Transaction  $transactionObject */
 
-				$_order = Mage::getModel('sales/order')->loadByIncrementId($objectCharge->getTrackId());
+			if(!empty($objectCharge->getTrackId())) {
+              $orderid = $objectCharge->getTrackId();
+            }
+            else {
+              $param['chargeId'] = $chargeId;
+              $chargehistory = $Api->getChargeHistory($param);
+
+              $chargeArray = $chargehistory->getCharges()->toArray();
+              foreach ($chargeArray as $charge) {
+                if ($charge['status'] == 'Authorised') {
+                  $orderid = $charge['trackId'];
+                }
+              }
+            }
+            $_order = Mage::getModel('sales/order')->loadByIncrementId($orderid);
 				$transactionObject = Mage::getModel('sales/order_payment_transaction')
 					->load($_order->getId(),'order_id');
 

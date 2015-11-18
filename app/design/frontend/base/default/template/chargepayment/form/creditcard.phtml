@@ -29,16 +29,15 @@
                 loading = true;
                 checkout.setLoadWaiting(false);
                 if($buttonCheckout = $$('#checkout-review-submit .btn-checkout')) {
-
+                  if (document.getElementById('cko-cc-paymenToken').value.length === 0) {
                     var eventClick = $buttonCheckout[0].show().readAttribute('data-clickEvent');
                     document.getElementById('cko-cc-paymenToken').value = event.data.paymentToken;
                     $$('#checkout-review-submit .btn-checkout')[0].writeAttribute('onclick', eventClick);
                     $('review-please-wait').show();
-                   fireEvent($$('#checkout-review-submit .btn-checkout')[0], 'click');
+                    fireEvent($$('#checkout-review-submit .btn-checkout')[0], 'click');
                     $$('#checkout-review-submit .btn-checkout')[0].hide();
-
                     checkout.setLoadWaiting('review');
-
+                  }
                 }
             },
             paymentTokenExpired: function(){
@@ -59,7 +58,7 @@
               loading = true;
                checkout.setLoadWaiting(false);
                 if($buttonCheckout = $$('#checkout-review-submit .btn-checkout')) {
-
+                  if (document.getElementById('cko-cc-paymenToken').value.length === 0) {
                     var eventClick = $buttonCheckout[0].show().readAttribute('data-clickEvent');
                     document.getElementById('cko-cc-paymenToken').value = event.data.paymentToken;
                     $$('#checkout-review-submit .btn-checkout')[0].writeAttribute('onclick', eventClick);
@@ -69,6 +68,7 @@
                     $$('#checkout-review-submit .btn-checkout')[0].hide();
                     checkout.setLoadWaiting('review');
                     //Checkout.continueFlow();
+                  }
                 }
             },
             ready: function() {
@@ -85,13 +85,14 @@
                 loading = true;
                 checkout.setLoadWaiting(false);
                 if($buttonCheckout = $$('#checkout-review-submit .btn-checkout')) {
+                  if (document.getElementById('cko-lp-redirectUrl').value.length === 0) {
                     var eventClick = $buttonCheckout[0].show().readAttribute('data-clickEvent');
                     document.getElementById('cko-lp-redirectUrl').value = event.data.redirectUrl;
                     $$('#checkout-review-submit .btn-checkout')[0].writeAttribute('onclick', eventClick);
                     fireEvent($$('#checkout-review-submit .btn-checkout')[0], 'click');
                     $$('#checkout-review-submit .btn-checkout')[0].hide();
                     checkout.setLoadWaiting('review');
-
+                  }
                 }
                 
             },
