@@ -39,6 +39,7 @@ abstract class CheckoutApi_ChargePayment_Model_Method_Abstract extends Mage_Paym
                 $paymentMethod = $respondCharge->getCard()->getPaymentMethod();
                 $cctype = $this->_getCcCodeType($paymentMethod);
                 $payment->setCcType($cctype);
+                $payment->setCcLast4($respondCharge->getCard()->getLast4());
 				$orderStatus = $this->getConfigData ( 'order_status' );
 				$order->setStatus ( $orderStatus , false );
 

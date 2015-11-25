@@ -176,6 +176,7 @@ class CheckoutApi_ChargePayment_Block_Form_Creditcard  extends Mage_Payment_Bloc
 
         $config['postedParam'] = array (
             'trackId'           =>    $orderid,
+            'customerName'      =>    $billingAddress->getName(),
             'value'             =>    $amountCents,
             'chargeMode'        =>    $chargeModeValue,
             'currency'          =>    $currencyDesc,
