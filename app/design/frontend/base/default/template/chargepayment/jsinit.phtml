@@ -1,7 +1,20 @@
 
 <script type="text/javascript">
-
-
+  
+    window.CheckoutJsValidation = function () {
+      $$('#checkout-review-submit .checkout-agreements input[type="checkbox"]').each(function (el) {
+          if (!el.checked) {
+            alert('Please agree to all the terms and conditions before placing the order.');
+          } else {
+              if(typeof CheckoutIntegration !='undefined') {
+                CheckoutIntegration.open();
+              }  else {
+                Checkout.open();
+              }
+          }
+      });
+    }
+    
     $buttonCheckout =  null;
     if($buttonCheckout = $$('#checkout-review-submit .btn-checkout')) {
         var eventClick = $buttonCheckout[$buttonCheckout.length-1].readAttribute('onclick');
@@ -9,27 +22,20 @@
 
         if(typeof Checkout !='undefined' && Checkout.hasOwnProperty('render') && !Checkout.isMobile()) {
             $buttonCheckout.each(function(item,index){
-                $buttonCheckout[index].writeAttribute('onclick','Checkout.open(); checkout.setLoadWaiting(\'review\')');
+                $buttonCheckout[index].writeAttribute('onclick','CheckoutJsValidation();');
             });
-
-        }else   if(typeof CheckoutIntegration !='undefined' && CheckoutIntegration.hasOwnProperty('render') &&  !CheckoutIntegration.isMobile()) {
+            
+        }else if(typeof CheckoutIntegration !='undefined' && CheckoutIntegration.hasOwnProperty('render') &&  !CheckoutIntegration.isMobile()) {
 
             $buttonCheckout.each(function(item,index){
-                $buttonCheckout[index].writeAttribute('onclick','CheckoutIntegration.open(); checkout.setLoadWaiting(\'review\')');
+                $buttonCheckout[index].writeAttribute('onclick','CheckoutJsValidation();');
             });
 
         }
-
-
 
         <?php endif; ?>
         $buttonCheckout.each(function(item,index){
             $buttonCheckout[index].writeAttribute('data-clickevent',eventClick);
         });
-
-
-
     }
-
-
 </script>
