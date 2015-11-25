@@ -32,16 +32,13 @@ class CheckoutApi_ChargePayment_IndexController extends Mage_Core_Controller_Fro
 			if($chargeId = $objectCharge->getId()) {
 				/** @var Mage_Sales_Model_Resource_Order_Payment_Transaction  $transactionObject */
 
-			if(!empty($objectCharge->getTrackId())) {
-              $orderid = $objectCharge->getTrackId();
-            }
-            else {
+			$orderid = $objectCharge->getTrackId();
+            if($objectCharge->getTrackId() == null){
               $param['chargeId'] = $chargeId;
               $chargehistory = $Api->getChargeHistory($param);
-
               $chargeArray = $chargehistory->getCharges()->toArray();
               foreach ($chargeArray as $charge) {
-                if ($charge['status'] == 'Authorised') {
+                if ($charge['status'] == 'Authorised' || $charge['status'] == 'Pending') {
                   $orderid = $charge['trackId'];
                 }
               }
@@ -221,6 +218,7 @@ class CheckoutApi_ChargePayment_IndexController extends Mage_Core_Controller_Fro
                     $paymentMethod = $chargeObject->getCard()->getPaymentMethod();
                     $cctype = $this->_getCcCodeType($paymentMethod);
                     $_payment->setCcType($cctype);
+                    $_payment->setCcLast4($chargeObject->getCard()->getLast4());
                     $_payment->save();
                     $_order->setStatus ( $orderStatus , false );
                     $_order->addStatusToHistory ( $orderStatus , 'Payment successfully '.$chargeObject->getStatus().'
