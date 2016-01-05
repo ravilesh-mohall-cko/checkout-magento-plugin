@@ -153,6 +153,7 @@
                     </checkoutapi_chargePayment>
                 </observers>
             </adminhtml_widget_container_html_before>
+
         </events>
     </adminhtml>
     <default>

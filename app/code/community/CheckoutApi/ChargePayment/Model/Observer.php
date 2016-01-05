@@ -35,7 +35,6 @@ class CheckoutApi_ChargePayment_Model_Observer
 
         }
     }
-    
     public function salesModelServiceQuoteSubmitAfter(Varien_Event_Observer $observer)
     {
         $order = $observer->getOrder();

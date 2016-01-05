@@ -190,6 +190,7 @@ class CheckoutApi_ChargePayment_Block_Form_Creditcard  extends Mage_Payment_Bloc
         );
 
          if($this->getConfigData('payment_action') == 'authorize' ) {
+
             $config['postedParam']['autoCapture']  = CheckoutApi_Client_Constant::AUTOCAPUTURE_AUTH;
             $config['postedParam']['autoCapTime']  = 0;
         } else {
