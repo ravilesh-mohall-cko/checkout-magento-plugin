@@ -108,8 +108,6 @@
             </checkoutapi_chargePayment>
 
         </routers>
-
-
         <events>
             <sales_model_service_quote_submit_after>
                 <observers>
@@ -171,7 +169,7 @@
                 <payment_action>authorize</payment_action>
                 <order_status_capture>complete</order_status_capture>
                 <allowspecific>0</allowspecific>
-                <mode>dev</mode>
+                <mode>sandbox</mode>
                 <timeout>60</timeout>
                 <auto_capture_time>0</auto_capture_time>
             </creditcardpci>
@@ -184,8 +182,9 @@
                 <payment_action>processing</payment_action>
                 <order_status_capture>complete</order_status_capture>
                 <allowspecific>0</allowspecific>
-                <mode>dev</mode>
+                <mode>sandbox</mode>
                 <timeout>60</timeout>
+                <min_amount>0</min_amount>
                 <auto_capture_time>0</auto_capture_time>
             </creditcard>
             <localpayment>

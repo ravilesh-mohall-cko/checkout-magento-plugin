@@ -55,6 +55,11 @@ class CheckoutApi_ChargePayment_Model_Method_Creditcardpci extends CheckoutApi_C
 
         return $this;
     }
+    
+    protected function _getCcCodeType($paymentMethod)
+    {
+        return false;
+    }
 
 
 }

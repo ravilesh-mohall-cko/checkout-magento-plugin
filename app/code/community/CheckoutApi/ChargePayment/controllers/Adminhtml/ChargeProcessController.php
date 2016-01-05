@@ -10,6 +10,7 @@ class CheckoutApi_ChargePayment_Adminhtml_ChargeProcessController extends Mage_A
         /** @var Mage_Sales_Model_Order $_order */
         $_order = Mage::getModel('sales/order')->load($_id);
         $_payment = $_order->getPayment();
+        $_currency = $_order->getOrderCurrencyCode();
         $chargeId = preg_replace('/\-capture$/','',$_payment->getLastTransId());
         $_method = $_payment->getMethod();
 
@@ -31,8 +32,9 @@ class CheckoutApi_ChargePayment_Adminhtml_ChargeProcessController extends Mage_A
                 $_authorizeAmount = $_payment->getAmountAuthorized();
                 /** @var CheckoutApi_Client_ClientGW3  $Api */
                 $_Api = CheckoutApi_Api::getApi(array('mode'=>$this->getConfigData('mode')));
+                $amountCents = $_Api->valueToDecimal($_authorizeAmount,$_currency);
                 $_config['postedParam'] = array (
-                                                'value'=>(int)($_authorizeAmount*100)
+                                                'value'=> $amountCents
                                                 );
 
                 $_captureCharge = $_Api->captureCharge($_config);
@@ -118,19 +120,20 @@ class CheckoutApi_ChargePayment_Adminhtml_ChargeProcessController extends Mage_A
     {
         $_id = $this->getRequest()->getParam('order_id');
         $_order = Mage::getModel('sales/order')->load($_id);
-
+        $_currency = $_order->getOrderCurrencyCode();
         $_payment = $_order->getPayment();
         $chargeId = preg_replace('/\-capture$/','',$_payment->getLastTransId());
         $_authorizeAmount = $_payment->getAmountAuthorized();
         /** @var CheckoutApi_Client_ClientGW3  $Api */
 
         $_Api = CheckoutApi_Api::getApi(array('mode'=>$this->getConfigData('mode')));
+        $amountCents = $_Api->valueToDecimal($_authorizeAmount,$_currency);
         $secretKey = $this->getConfigData('privatekey');
         $_config = array();
         $_config['authorization'] = $secretKey ;
         $_config['chargeId'] = $chargeId ;
         $_config['postedParam'] = array (
-            'value'=>(int)($_authorizeAmount*100)
+            'value'=> $amountCents
         );
 
         $_refundCharge = $_Api->voidCharge($_config);

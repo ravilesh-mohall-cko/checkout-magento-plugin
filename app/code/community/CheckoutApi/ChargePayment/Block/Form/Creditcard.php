@@ -75,7 +75,7 @@ class CheckoutApi_ChargePayment_Block_Form_Creditcard  extends Mage_Payment_Bloc
 
     public function getAmount()
     {
-        return   $this->_getQuote()->getGrandTotal()*100;
+        return   $this->_getQuote()->getGrandTotal();
     }
 
     public function getCurrency()
@@ -98,17 +98,43 @@ class CheckoutApi_ChargePayment_Block_Form_Creditcard  extends Mage_Payment_Bloc
     {
        return  Mage::app()->getStore()->getName();
     }
+    
+    public function getis3D()
+    {
+        return $this->getConfigData('card_type');
+    }
+    
+    public function getConvertAmount()
+    {
+        $Api = CheckoutApi_Api::getApi(array('mode'=>$this->getConfigData('mode')));
+        $currencyDesc = Mage::app()->getStore()->getCurrentCurrencyCode();
+        $amount = $Api->valueToDecimal($this->_getQuote()->getGrandTotal(),$currencyDesc);
+        
+        return  $amount;
+    }
+    
 
-    public function getPaymentTokenResult()
+    public function getPaymentTokenResult($orderid = null)
     {
 
         $Api = CheckoutApi_Api::getApi(array('mode'=>$this->getConfigData('mode')));
         $secretKey = $this->getConfigData('privatekey');
+        
         $billingAddress = $this->_getQuote()->getBillingAddress();
         $shippingAddress = $this->_getQuote()->getBillingAddress();
         $orderedItems = $this->_getQuote()->getAllItems();
         $currencyDesc =  Mage::app()->getStore()->getCurrentCurrencyCode();
-        $amountCents = $this->getAmount();
+        $minAmount3D =  $Api->valueToDecimal($this->getConfigData('min_amount'),$currencyDesc);
+		$amountCents = $Api->valueToDecimal($this->getAmount(),$currencyDesc);
+
+        $chargeMode = $this->getis3D();
+        $chargeModeValue = 1;
+        if($chargeMode) {
+            if($amountCents > $minAmount3D){
+              $chargeModeValue = 2;
+            }
+        }
+        
         $street = Mage::helper('customer/address')
             ->convertStreetLines($shippingAddress->getStreet(), 2);
         $shippingAddressConfig = array(
@@ -149,8 +175,10 @@ class CheckoutApi_ChargePayment_Block_Form_Creditcard  extends Mage_Payment_Bloc
         );
 
         $config['postedParam'] = array (
+            'trackId'           =>    $orderid,
+            'customerName'      =>    $billingAddress->getName(),
             'value'             =>    $amountCents,
-            "chargeMode"        =>    1,
+            'chargeMode'        =>    $chargeModeValue,
             'currency'          =>    $currencyDesc,
             'shippingDetails'   =>    $shippingAddressConfig,
             'products'          =>    $products,
@@ -161,7 +189,8 @@ class CheckoutApi_ChargePayment_Block_Form_Creditcard  extends Mage_Payment_Bloc
             )
         );
 
-        if($this->getConfigData('payment_action') == Mage_Paygate_Model_Authorizenet::ACTION_AUTHORIZE ) {
+         if($this->getConfigData('payment_action') == 'authorize' ) {
+
             $config['postedParam']['autoCapture']  = CheckoutApi_Client_Constant::AUTOCAPUTURE_AUTH;
             $config['postedParam']['autoCapTime']  = 0;
         } else {
@@ -180,7 +209,7 @@ class CheckoutApi_ChargePayment_Block_Form_Creditcard  extends Mage_Payment_Bloc
             $paymentTokenReturn['token'] = $paymentToken ;
             $paymentTokenReturn['succes'] = true;
         }else {
-            $paymentTokenCharge->printError();
+            //$paymentTokenCharge->printError();
         }
 
         if(!$paymentToken) {

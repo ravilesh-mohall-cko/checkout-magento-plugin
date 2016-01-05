@@ -13,7 +13,7 @@
 
      public function getAmount()
      {
-         return   $this->_getQuote()->getGrandTotal()*100;
+         return   $this->_getQuote()->getGrandTotal();
 
      }
 
@@ -56,4 +56,18 @@
 
         return $this->_getQuote()->getPayment()->getMethod() == 'creditcard';
      }
+     
+    public function getis3D()
+    {
+        return $this->getConfigData('card_type');
+    }
+    
+    public function getConvertAmount()
+    {
+        $Api = CheckoutApi_Api::getApi(array('mode'=>$this->getConfigData('mode')));
+        $currencyDesc = Mage::app()->getStore()->getCurrentCurrencyCode();
+        $amount = $Api->valueToDecimal($this->_getQuote()->getGrandTotal(),$currencyDesc);
+        
+        return  $amount;
+    }
 }
