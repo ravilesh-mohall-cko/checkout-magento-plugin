@@ -2,19 +2,27 @@
 <script type="text/javascript">
   
     window.CheckoutJsValidation = function () {
-      $$('#checkout-review-submit .checkout-agreements input[type="checkbox"]').each(function (el) {
-          if (!el.checked) {
-            alert('Please agree to all the terms and conditions before placing the order.');
-          } else {
-              if(typeof CheckoutIntegration !='undefined') {
-                CheckoutIntegration.open();
-              }  else {
-                Checkout.open();
-              }
-          }
-      });
+      if ($$(".checkout-agreements").length) {
+        $$('#checkout-review-submit .checkout-agreements input[type="checkbox"]').each(function (el) {
+            if (!el.checked) {
+              alert('Please agree to all the terms and conditions before placing the order.');
+            } else {
+                if(typeof CheckoutIntegration !='undefined') {
+                  CheckoutIntegration.open();
+                } else {
+                  Checkout.open();
+                }
+            }
+        });
+      }
+      else {
+        if(typeof CheckoutIntegration !='undefined') {
+          CheckoutIntegration.open();
+        }  else {
+           Checkout.open();
+        }
+      }
     }
-    
     $buttonCheckout =  null;
     if($buttonCheckout = $$('#checkout-review-submit .btn-checkout')) {
         var eventClick = $buttonCheckout[$buttonCheckout.length-1].readAttribute('onclick');
