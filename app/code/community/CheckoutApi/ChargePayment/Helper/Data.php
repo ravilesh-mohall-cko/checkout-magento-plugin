@@ -14,7 +14,7 @@ class CheckoutApi_ChargePayment_Helper_Data  extends Mage_Core_Helper_Abstract
     public function getJsPath()
     {
        $mode =  $this->getConfigData('mode','creditcard');
-        $js = '<script src="https://www.checkout.com/cdn/js/checkout.js" async ></script>';
+        $js = '<script src="https://cdn.checkout.com/js/checkout.js" async ></script>';
        if($mode == 'sandbox') {
            $js ='<script src="https://sandbox.checkout.com/js/v1/checkout.js" async ></script>';
        }
