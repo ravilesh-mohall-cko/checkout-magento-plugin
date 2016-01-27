@@ -141,7 +141,7 @@ class CheckoutApi_ChargePayment_Adminhtml_ChargeProcessController extends Mage_A
             new Varien_Object()
         );
 
-        if($_refundCharge->isValid() && $_refundCharge->getRefunded() &&
+        if($_refundCharge->isValid() && $_refundCharge->getStatus() == 'Voided' &&
             preg_match('/^1[0-9]+$/',$_refundCharge->getResponseCode())) {
             if ($_payment->getMethodInstance() instanceof CheckoutApi_ChargePayment_Model_Method_Creditcard) {
                 $_voidObj =  new Varien_Object();
