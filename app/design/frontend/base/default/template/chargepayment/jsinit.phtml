@@ -2,7 +2,7 @@
 <script type="text/javascript">
   
     window.CheckoutJsValidation = function () {
-      if ($$(".checkout-agreements").length) {
+      if ($$(".checkout-agreements .agree").length) {
         $$('#checkout-review-submit .checkout-agreements input[type="checkbox"]').each(function (el) {
             if (!el.checked) {
               alert('Please agree to all the terms and conditions before placing the order.');
