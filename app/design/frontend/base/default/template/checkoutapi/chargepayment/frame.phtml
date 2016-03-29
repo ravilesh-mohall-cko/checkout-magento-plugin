@@ -1,0 +1,33 @@
+<?php
+/**
+ * Template for checkout page
+ *
+ * @version 20160203
+ */
+?>
+<?php
+    $isJs           = $this->isJsApiPaymentMethod();
+    $overlay        = $this->getOverlayShade();
+    $overlayColor   = $overlay === 'dark' ? '#000' : '#fff';
+    $opacity        = $this->getOverlayOpacity();
+    $opacity        = empty($opacity) || $opacity > 1 ? 0.8 : $opacity;
+    $_controller    = Mage::app()->getFrontController()->getRequest()->getControllerName();
+    $_code          = $this->getPaymentCode();
+    $_saveOrderUrl  = $this->getControllerUrl();
+    $currentCode    = Mage::app()->getStore()->getCurrentCurrencyCode();
+    $baseCode       = Mage::app()->getStore()->getBaseCurrencyCode();
+?>
+<?php if($isJs): ?>
+    <script type="text/javascript">
+        window.jsCheckoutApi = new checkoutApi(
+            '<?php echo $_code ?>',
+            '<?php echo $_controller ?>',
+            '<?php echo $_saveOrderUrl ?>'
+        );
+
+        <?php if ($currentCode !== $baseCode):?>
+            $$('#checkout-review-table tfoot tr').last().hide();
+        <?php endif ?>
+    </script>
+    <div id="checkout-api-js-hover" style="display: none; z-index: 100; position: fixed; width: 100%; height: 100%; top: 0;left: 0; background-color: <?php echo $overlayColor;?>; opacity:<?php echo $opacity;?>;"></div>
+<?php endif?>

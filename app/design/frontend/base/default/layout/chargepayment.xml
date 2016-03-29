@@ -1,0 +1,45 @@
+<?xml version="1.0"?>
+<layout version="0.1.0">
+    <customer_account>
+        <reference name="customer_account_navigation">
+            <action method="addLink" ifconfig="payment/checkoutapicard/active">
+                <name>checkout_api_card_list</name>
+                <path>chargepayment/cards</path>
+                <label>My Saved Cards (Checkout.com)</label>
+            </action>
+        </reference>
+    </customer_account>
+    <chargepayment_cards_index>
+        <update handle="customer_account"/>
+        <reference name="my.account.wrapper">
+            <block type="chargepayment/customer_cards" name="unique_layout_name" template="checkoutapi/customer/cardlist.phtml"/>
+            <block type="customer/account_dashboard" name="customer.account.link.back" template="customer/account/link/back.phtml" />
+        </reference>
+    </chargepayment_cards_index>
+    <checkout_onepage_index translate="label">
+        <reference name="head">
+            <action method="addJs"><script>checkout_api/chargepayment.js</script></action>
+        </reference>
+        <reference name="before_body_end">
+            <block type="core/text" name="checkoutapijs">
+                <action method="setText" ifconfig="payment/checkoutapijs/active">
+                    <content  helper="chargepayment/getJsPathHtml"></content>
+                </action>
+            </block>
+        </reference>
+    </checkout_onepage_index>
+    <checkout_onepage_review>
+        <reference name="checkout.onepage.review.info.items.after">
+            <block name="checkoutapi.frame" type="chargepayment/frame" >
+                <action method="setTemplate" ifconfig="payment/checkoutapijs/active" >
+                    <template>checkoutapi/chargepayment/frame.phtml</template>
+                </action>
+            </block>
+            <block name="checkoutapi.framePhp" type="chargepayment/framePhp" >
+                <action method="setTemplate" ifconfig="payment/checkoutapicard/active" >
+                    <template>checkoutapi/chargepayment/framePhp.phtml</template>
+                </action>
+            </block>
+        </reference>
+    </checkout_onepage_review>
+</layout>
