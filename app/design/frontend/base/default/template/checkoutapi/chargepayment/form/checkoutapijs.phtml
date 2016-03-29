@@ -1,0 +1,66 @@
+<?php
+/**
+ * Template for checkout page
+ *
+ * @version 20160202
+ */
+?>
+<?php $isActive = $this->isActive();?>
+<?php if ($isActive):?>
+    <?php $tokenResult = $this->getPaymentTokenResult(); ?>
+    <ul class="form-list" id="payment_form_<?php echo $this->getMethodCode() ?>" style="display:none;">
+        <?php if ($tokenResult['success']):?>
+        <li>
+            <input type="hidden" id="cko-card-token" name="payment[checkout_card_token]" value=""/>
+            <script type="text/javascript">
+                Checkout.render({
+                    debugMode:                  '<?php echo $this->getDebugMode() ? 'true': 'false';?>',
+                    renderMode:                 '<?php echo $this->getRenderMode();?>',
+                    namespace:                  '<?php echo $this->getNamespace();?>',
+                    publicKey:                  '<?php echo $this->getPublicKey();?>',
+                    paymentToken:               '<?php echo $tokenResult['token'];?>',
+                    customerEmail:              '<?php echo $tokenResult['customerEmail'];?>',
+                    customerName:               '<?php echo $tokenResult['customerName'];?>',
+                    value:                      '<?php echo $tokenResult['value'];?>',
+                    currency:                   '<?php echo $tokenResult['currency'];?>',
+                    widgetContainerSelector:    '#payment_form_<?php echo $this->getMethodCode() ?>',
+                    paymentMode:                '<?php echo $this->getPaymentMode();?>',
+                    logoUrl:                    '<?php echo $this->getLogoUrl();?>',
+                    themeColor:                 '<?php echo $this->getThemeColor();?>',
+                    buttonColor:                '<?php echo $this->getButtonColor();?>',
+                    iconColor:                  '<?php echo $this->getIconColor();?>',
+                    useCurrencyCode:            '<?php echo $this->isUseCurrencyCode() ? 'true' : 'false';?>',
+                    title:                      '<?php echo $this->getTitle();?>',
+                    widgetColor:                '<?php echo $this->getWidgetColor();?>',
+                    buttonLabelColor:           '<?php echo $this->getButtonLabelColor();?>',
+                    styling:                    {
+                        formButtonColor:        '<?php echo $this->getFormButtonColor();?>',
+                        formButtonColorLabel:   '<?php echo $this->getFormButtonColorLabel();?>',
+                        overlayShade:           '<?php echo $this->getOverlayShade();?>',
+                        overlayOpacity:         '<?php echo $this->getOverlayOpacity();?>',
+                        showMobileIcons:        '<?php echo $this->isShowMobileIcons() ? 'true' : 'false';?>',
+                        widgetIconSize:         '<?php echo $this->getWidgetIconSize();?>'
+                    },
+                    cardFormMode:               '<?php echo $this->getCardFormMode();?>',
+                    cardCharged: function(event){
+                        console.log(event);
+                        // do work
+                    },
+                    cardTokenised: function(event){
+                        if (document.getElementById('cko-card-token').value.length === 0 || document.getElementById('cko-card-token').value != event.data.cardToken) {
+                            document.getElementById('cko-card-token').value = event.data.cardToken;
+                            jsCheckoutApi.saveOrderSubmit();
+                        }
+                    }
+                });
+            </script>
+        </li>
+        <?php else:?>
+            <li><?php echo $this->__('Error creating Payment Token.') ?></li>
+        <?php endif?>
+    </ul>
+<?php else :?>
+    <ul class="form-list" id="payment_form_<?php echo $this->getMethodCode() ?>" style="display:none;">
+        <li><?php echo $this->__('Selected Payment Type is not allowed.') ?></li>
+    </ul>
+<?php endif?>
