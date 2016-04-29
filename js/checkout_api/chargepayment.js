@@ -81,7 +81,7 @@ checkoutApi.prototype = {
         if (this.agreementIsValid()) {
             Checkout.open();
 
-            if (Checkout.isMobile && Checkout.isMobile()) {
+            if (Checkout.isMobile()) {
                 $('checkout-api-js-hover').show();
             }
         } else {
@@ -134,7 +134,7 @@ checkoutApi.prototype = {
                         msg = msg.join("\n");
                     }
                     if (msg) {
-                        if (Checkout.isMobile()) {
+                        if (Checkout.isMobile && Checkout.isMobile()) {
                             $('checkout-api-js-hover').hide();
                         }
                         alert(msg);
