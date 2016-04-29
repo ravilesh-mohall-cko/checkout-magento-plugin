@@ -105,12 +105,14 @@
                 <order_status>pending</order_status>
                 <allowspecific>0</allowspecific>
                 <mode>sandbox</mode>
+                <current_currency>0</current_currency>
             </checkoutapicard>
             <checkoutapijs>
                 <active>0</active>
                 <cctypes>AE,VI,MC,DI</cctypes>
                 <title>Credit Card (Checkout.com)</title>
                 <model>chargepayment/creditCardJs</model>
+                <current_currency>0</current_currency>
                 <order_status>pending</order_status>
                 <allowspecific>0</allowspecific>
                 <mode>sandbox</mode>
@@ -139,14 +141,6 @@
             </updates>
         </layout>
         <events>
-            <checkout_submit_all_after>
-                <observers>
-                    <chargepayment_update_all_edit_increments>
-                        <class>chargepayment/observer</class>
-                        <method>updateAllEditIncrements</method>
-                    </chargepayment_update_all_edit_increments>
-                </observers>
-            </checkout_submit_all_after>
             <controller_action_postdispatch_adminhtml_sales_order_voidPayment>
                 <observers>
                     <chargepayment>

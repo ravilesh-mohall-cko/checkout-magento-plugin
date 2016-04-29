@@ -60,11 +60,23 @@
                                 <active>1</active>
                             </depends>
                         </publickey>
+                        <current_currency translate="label">
+                            <label>Use current currency</label>
+                            <frontend_type>select</frontend_type>
+                            <source_model>adminhtml/system_config_source_yesno</source_model>
+                            <sort_order>5</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>0</show_in_store>
+                            <depends>
+                                <active>1</active>
+                            </depends>
+                        </current_currency>
                         <order_status translate="label">
                             <label>New Order Status</label>
                             <frontend_type>select</frontend_type>
                             <source_model>adminhtml/system_config_source_order_status_newprocessing</source_model>
-                            <sort_order>5</sort_order>
+                            <sort_order>6</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>1</show_in_website>
                             <show_in_store>0</show_in_store>
@@ -76,7 +88,7 @@
                             <label>When voided change order status to</label>
                             <frontend_type>select</frontend_type>
                             <source_model>chargepayment/adminhtml_system_config_source_voidstatus</source_model>
-                            <sort_order>6</sort_order>
+                            <sort_order>7</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>1</show_in_website>
                             <show_in_store>0</show_in_store>
@@ -88,7 +100,7 @@
                             <label>Show card type field</label>
                             <frontend_type>select</frontend_type>
                             <source_model>adminhtml/system_config_source_yesno</source_model>
-                            <sort_order>7</sort_order>
+                            <sort_order>8</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>1</show_in_website>
                             <show_in_store>0</show_in_store>
@@ -100,7 +112,7 @@
                             <label>Credit Card Types</label>
                             <frontend_type>multiselect</frontend_type>
                             <source_model>adminhtml/system_config_source_payment_cctype</source_model>
-                            <sort_order>8</sort_order>
+                            <sort_order>9</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>1</show_in_website>
                             <show_in_store>0</show_in_store>
@@ -113,7 +125,7 @@
                             <label>Payment Action</label>
                             <frontend_type>select</frontend_type>
                             <source_model>paygate/authorizenet_source_paymentAction</source_model>
-                            <sort_order>9</sort_order>
+                            <sort_order>10</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>1</show_in_website>
                             <show_in_store>0</show_in_store>
@@ -128,7 +140,7 @@
                             <show_in_default>1</show_in_default>
                             <show_in_website>1</show_in_website>
                             <show_in_store>0</show_in_store>
-                            <sort_order>10</sort_order>
+                            <sort_order>11</sort_order>
                             <depends>
                                 <active>1</active>
                             </depends>
@@ -136,7 +148,7 @@
                         <specificcountry translate="label">
                             <label>Countries Payment Applicable From</label>
                             <frontend_type>multiselect</frontend_type>
-                            <sort_order>11</sort_order>
+                            <sort_order>12</sort_order>
                             <source_model>adminhtml/system_config_source_country</source_model>
                             <show_in_default>1</show_in_default>
                             <show_in_website>1</show_in_website>
@@ -149,7 +161,7 @@
                             <label>Debug</label>
                             <frontend_type>select</frontend_type>
                             <source_model>adminhtml/system_config_source_yesno</source_model>
-                            <sort_order>12</sort_order>
+                            <sort_order>13</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>1</show_in_website>
                             <show_in_store>0</show_in_store>
@@ -161,7 +173,7 @@
                             <label>Endpoint url mode</label>
                             <frontend_type>select</frontend_type>
                             <source_model>chargepayment/adminhtml_system_config_source_apimode</source_model>
-                            <sort_order>13</sort_order>
+                            <sort_order>14</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>1</show_in_website>
                             <show_in_store>0</show_in_store>
@@ -216,8 +228,8 @@
                                 <active>1</active>
                             </depends>
                         </secretkey>
-                        <publickey translate="label">
-                            <label>Public Key</label>
+                        <publickey_web translate="label">
+                            <label>Public Shared Key</label>
                             <frontend_type>text</frontend_type>
                             <show_in_default>1</show_in_default>
                             <show_in_website>1</show_in_website>
@@ -229,12 +241,38 @@
                             <depends>
                                 <active>1</active>
                             </depends>
+                        </publickey_web>
+                        <publickey translate="label">
+                            <label>Public Key</label>
+                            <frontend_type>text</frontend_type>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>0</show_in_store>
+                            <sort_order>5</sort_order>
+                            <comment>
+                                <![CDATA[Used for JS Checkout API]]>
+                            </comment>
+                            <depends>
+                                <active>1</active>
+                            </depends>
                         </publickey>
+                        <current_currency translate="label">
+                            <label>Use current currency</label>
+                            <frontend_type>select</frontend_type>
+                            <source_model>adminhtml/system_config_source_yesno</source_model>
+                            <sort_order>6</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>0</show_in_store>
+                            <depends>
+                                <active>1</active>
+                            </depends>
+                        </current_currency>
                         <order_status translate="label">
                             <label>New Order Status</label>
                             <frontend_type>select</frontend_type>
                             <source_model>adminhtml/system_config_source_order_status_newprocessing</source_model>
-                            <sort_order>5</sort_order>
+                            <sort_order>7</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>1</show_in_website>
                             <show_in_store>0</show_in_store>
@@ -246,7 +284,7 @@
                             <label>When voided change order status to</label>
                             <frontend_type>select</frontend_type>
                             <source_model>chargepayment/adminhtml_system_config_source_voidstatus</source_model>
-                            <sort_order>6</sort_order>
+                            <sort_order>8</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>1</show_in_website>
                             <show_in_store>0</show_in_store>
@@ -258,7 +296,7 @@
                             <label>Payment Action</label>
                             <frontend_type>select</frontend_type>
                             <source_model>paygate/authorizenet_source_paymentAction</source_model>
-                            <sort_order>7</sort_order>
+                            <sort_order>9</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>1</show_in_website>
                             <show_in_store>0</show_in_store>
@@ -273,7 +311,7 @@
                             <show_in_default>1</show_in_default>
                             <show_in_website>1</show_in_website>
                             <show_in_store>0</show_in_store>
-                            <sort_order>8</sort_order>
+                            <sort_order>10</sort_order>
                             <depends>
                                 <active>1</active>
                             </depends>
@@ -281,7 +319,7 @@
                         <specificcountry translate="label">
                             <label>Countries Payment Applicable From</label>
                             <frontend_type>multiselect</frontend_type>
-                            <sort_order>9</sort_order>
+                            <sort_order>11</sort_order>
                             <source_model>adminhtml/system_config_source_country</source_model>
                             <show_in_default>1</show_in_default>
                             <show_in_website>1</show_in_website>
@@ -294,7 +332,7 @@
                             <label>Debug</label>
                             <frontend_type>select</frontend_type>
                             <source_model>adminhtml/system_config_source_yesno</source_model>
-                            <sort_order>10</sort_order>
+                            <sort_order>12</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>1</show_in_website>
                             <show_in_store>0</show_in_store>
@@ -306,7 +344,7 @@
                             <label>Endpoint url mode</label>
                             <frontend_type>select</frontend_type>
                             <source_model>chargepayment/adminhtml_system_config_source_apimode</source_model>
-                            <sort_order>11</sort_order>
+                            <sort_order>13</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>1</show_in_website>
                             <show_in_store>0</show_in_store>
@@ -321,7 +359,7 @@
                             <label>Is 3D</label>
                             <frontend_type>select</frontend_type>
                             <source_model>chargepayment/adminhtml_system_config_source_is3d</source_model>
-                            <sort_order>12</sort_order>
+                            <sort_order>14</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>1</show_in_website>
                             <show_in_store>0</show_in_store>
@@ -335,7 +373,7 @@
                             <show_in_default>1</show_in_default>
                             <show_in_website>1</show_in_website>
                             <show_in_store>0</show_in_store>
-                            <sort_order>13</sort_order>
+                            <sort_order>15</sort_order>
                             <depends>
                                 <active>1</active>
                             </depends>
@@ -350,7 +388,7 @@
                             <show_in_default>1</show_in_default>
                             <show_in_website>1</show_in_website>
                             <show_in_store>0</show_in_store>
-                            <sort_order>14</sort_order>
+                            <sort_order>16</sort_order>
                             <depends>
                                 <active>1</active>
                             </depends>
@@ -364,7 +402,7 @@
                             <show_in_default>1</show_in_default>
                             <show_in_website>1</show_in_website>
                             <show_in_store>0</show_in_store>
-                            <sort_order>15</sort_order>
+                            <sort_order>17</sort_order>
                             <depends>
                                 <active>1</active>
                             </depends>
@@ -378,7 +416,7 @@
                             <show_in_default>1</show_in_default>
                             <show_in_website>1</show_in_website>
                             <show_in_store>0</show_in_store>
-                            <sort_order>16</sort_order>
+                            <sort_order>18</sort_order>
                             <depends>
                                 <active>1</active>
                             </depends>
@@ -392,7 +430,7 @@
                             <show_in_default>1</show_in_default>
                             <show_in_website>1</show_in_website>
                             <show_in_store>0</show_in_store>
-                            <sort_order>17</sort_order>
+                            <sort_order>19</sort_order>
                             <depends>
                                 <active>1</active>
                             </depends>
@@ -401,7 +439,7 @@
                             <label>Use currency Code</label>
                             <frontend_type>select</frontend_type>
                             <source_model>adminhtml/system_config_source_yesno</source_model>
-                            <sort_order>18</sort_order>
+                            <sort_order>20</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>1</show_in_website>
                             <show_in_store>0</show_in_store>
@@ -415,7 +453,7 @@
                         <form_title translate="label">
                             <label>Title</label>
                             <frontend_type>text</frontend_type>
-                            <sort_order>19</sort_order>
+                            <sort_order>21</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>1</show_in_website>
                             <show_in_store>0</show_in_store>
@@ -429,7 +467,7 @@
                         <widget_color translate="label">
                             <label>Widget Color</label>
                             <frontend_type>text</frontend_type>
-                            <sort_order>20</sort_order>
+                            <sort_order>22</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>1</show_in_website>
                             <show_in_store>0</show_in_store>
@@ -443,7 +481,7 @@
                         <button_label_color translate="label">
                             <label>Button Label Color</label>
                             <frontend_type>text</frontend_type>
-                            <sort_order>21</sort_order>
+                            <sort_order>23</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>1</show_in_website>
                             <show_in_store>0</show_in_store>
@@ -457,7 +495,7 @@
                         <form_button_color translate="label">
                             <label>Form Button Color</label>
                             <frontend_type>text</frontend_type>
-                            <sort_order>22</sort_order>
+                            <sort_order>24</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>1</show_in_website>
                             <show_in_store>0</show_in_store>
@@ -471,7 +509,7 @@
                         <form_button_color_label translate="label">
                             <label>Form Button Color Label</label>
                             <frontend_type>text</frontend_type>
-                            <sort_order>23</sort_order>
+                            <sort_order>25</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>1</show_in_website>
                             <show_in_store>0</show_in_store>
@@ -486,7 +524,7 @@
                             <label>Overlay Shade</label>
                             <frontend_type>select</frontend_type>
                             <source_model>chargepayment/adminhtml_system_config_source_overlayShade</source_model>
-                            <sort_order>24</sort_order>
+                            <sort_order>26</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>1</show_in_website>
                             <show_in_store>0</show_in_store>
@@ -497,7 +535,7 @@
                         <overlay_opacity translate="label">
                             <label>Overlay Opacity</label>
                             <frontend_type>text</frontend_type>
-                            <sort_order>25</sort_order>
+                            <sort_order>27</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>1</show_in_website>
                             <show_in_store>0</show_in_store>
@@ -512,7 +550,7 @@
                             <label>Show Mobile Icons</label>
                             <frontend_type>select</frontend_type>
                             <source_model>adminhtml/system_config_source_yesno</source_model>
-                            <sort_order>26</sort_order>
+                            <sort_order>28</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>1</show_in_website>
                             <show_in_store>0</show_in_store>
@@ -527,7 +565,7 @@
                             <label>Widget Icon Size</label>
                             <frontend_type>select</frontend_type>
                             <source_model>chargepayment/adminhtml_system_config_source_widgetIconSize</source_model>
-                            <sort_order>27</sort_order>
+                            <sort_order>29</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>1</show_in_website>
                             <show_in_store>0</show_in_store>
@@ -542,7 +580,7 @@
                             <label>Payment Mode</label>
                             <frontend_type>select</frontend_type>
                             <source_model>chargepayment/adminhtml_system_config_source_paymentMode</source_model>
-                            <sort_order>28</sort_order>
+                            <sort_order>30</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>1</show_in_website>
                             <show_in_store>0</show_in_store>

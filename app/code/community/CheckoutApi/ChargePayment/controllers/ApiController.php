@@ -64,6 +64,9 @@ class CheckoutApi_ChargePayment_ApiController extends Mage_Core_Controller_Front
             case CheckoutApi_ChargePayment_Model_Webhook::EVENT_TYPE_CHARGE_VOIDED:
                 $result = $modelWebhook->voidOrder($data);
                 break;
+            case CheckoutApi_ChargePayment_Model_Webhook::EVENT_TYPE_INVOICE_CANCELLED:
+                $result = $modelWebhook->voidOrder($data);
+                break;
             default:
                 $this->getResponse()->setHttpResponseCode(500);
                 return;
@@ -109,6 +112,15 @@ class CheckoutApi_ChargePayment_ApiController extends Mage_Core_Controller_Front
      */
     public function callbackAction() {
         $responseToken  = (string)$this->getRequest()->getParam('cko-payment-token');
+
+        $session        = Mage::getSingleton('chargepayment/session_quote');
+        $isLocalPayment = $session->isCheckoutLocalPaymentTokenExist($responseToken);
+
+        if ($isLocalPayment) {
+            $this->_redirect('chargepayment/api/complete', array('_query' => 'token=' . $responseToken));
+            return;
+        }
+
         $modelWebhook   = Mage::getModel('chargepayment/webhook');
 
         if ($responseToken) {
@@ -127,5 +139,41 @@ class CheckoutApi_ChargePayment_ApiController extends Mage_Core_Controller_Front
 
             return;
         }
+    }
+
+    /**
+     * Local Payment Complete Page
+     *
+     * @url chargepayment/api/complete
+     *
+     * @return Mage_Core_Controller_Varien_Action
+     *
+     * @version 20160426
+     */
+    public function completeAction() {
+        $responseToken  = (string)$this->getRequest()->getParam('token');
+
+        if (!$responseToken) {
+            $this->norouteAction();
+            return;
+        }
+
+        $session        = Mage::getSingleton('chargepayment/session_quote');
+        $isLocalPayment = $session->isCheckoutLocalPaymentTokenExist($responseToken);
+
+        if (!$isLocalPayment) {
+            $this->norouteAction();
+            return;
+        }
+
+        $session->removeCheckoutLocalPaymentToken($responseToken);
+
+        $this->loadLayout();
+
+        $this->getLayout()
+            ->getBlock('head')
+            ->setTitle($this->__('Local Payment Completed (Checkout.com)'));
+
+        $this->renderLayout();
     }
 }

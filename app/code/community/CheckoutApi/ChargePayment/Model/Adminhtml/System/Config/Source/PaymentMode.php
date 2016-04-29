@@ -18,15 +18,15 @@ class CheckoutApi_ChargePayment_Model_Adminhtml_System_Config_Source_PaymentMode
     {
         return array(
             array(
-                'value' => 'mixed',
+                'value' => CheckoutApi_ChargePayment_Model_CreditCardJs::PAYMENT_MODE_MIXED,
                 'label' => Mage::helper('chargepayment')->__('Mixed')
             ),
             array(
-                'value' => 'card',
+                'value' => CheckoutApi_ChargePayment_Model_CreditCardJs::PAYMENT_MODE_CARD,
                 'label' => Mage::helper('chargepayment')->__('Card')
             ),
             array(
-                'value' => 'localpayment',
+                'value' => CheckoutApi_ChargePayment_Model_CreditCardJs::PAYMENT_MODE_LOCAL_PAYMENT,
                 'label' => Mage::helper('chargepayment')->__('Local Payment')
             ),
         );

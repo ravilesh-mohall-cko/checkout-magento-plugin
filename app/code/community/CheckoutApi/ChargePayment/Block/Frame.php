@@ -51,7 +51,14 @@ class CheckoutApi_ChargePayment_Block_Frame  extends Mage_Core_Block_Template
      * @version 20160212
      */
     public function getControllerUrl() {
-        $params = array(Mage_Core_Model_Url::FORM_KEY => Mage::getSingleton('core/session')->getFormKey());
+        $params     = array('form_key' => Mage::getSingleton('core/session')->getFormKey());
+        $isSecure   = Mage::app()->getStore()->isCurrentlySecure();
+
+        if ($isSecure){
+            $secure = array('_secure' => true);
+            $params = array_merge($params, $secure);
+
+        }
 
         return $this->getUrl('chargepayment/api/place/', $params);
     }

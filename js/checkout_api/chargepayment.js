@@ -81,7 +81,7 @@ checkoutApi.prototype = {
         if (this.agreementIsValid()) {
             Checkout.open();
 
-            if (Checkout.isMobile()) {
+            if (Checkout.isMobile && Checkout.isMobile()) {
                 $('checkout-api-js-hover').show();
             }
         } else {

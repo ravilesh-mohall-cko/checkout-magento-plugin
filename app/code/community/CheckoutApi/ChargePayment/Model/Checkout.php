@@ -143,21 +143,23 @@ abstract class CheckoutApi_ChargePayment_Model_Checkout extends Mage_Payment_Mod
             Mage::throwException('Invalid transaction ID.');
         }
 
-        $order          = $payment->getOrder();
-        $Api            = CheckoutApi_Api::getApi(array('mode'=>$this->getEndpointMode()));
-        $amount         = $order->getGrandTotal();
+        $order              = $payment->getOrder();
+        $Api                = CheckoutApi_Api::getApi(array('mode'=>$this->getEndpointMode()));
+        $isCurrentCurrency  = $payment->getAdditionalInformation('use_current_currency');
 
-        $amount         = $Api->valueToDecimal($amount, $order->getOrderCurrencyCode());
+        $amount         = $isCurrentCurrency ? $order->getGrandTotal() : $order->getBaseGrandTotal();
+        $amount         = $Api->valueToDecimal($amount, $isCurrentCurrency ? $order->getOrderCurrencyCode(): $order->getBaseCurrencyCode());
         $captureData    = $this->_getCaptureChargeData($payment, $amount);
-
-        try {
-            $result = $Api->captureCharge($captureData);
-        } catch (Exception $e) {
-            Mage::log('Please make sure connection failures are properly logged. Action - Capture', null, $this->_code.'.log');
-        }
+        $result         = $Api->captureCharge($captureData);
 
         if (is_object($result) && method_exists($result, 'toArray')) {
             Mage::log($result->toArray(), null, $this->_code.'.log');
+        }
+
+        if ($Api->getExceptionState()->hasError()) {
+            Mage::log($Api->getExceptionState()->getErrorMessage(), null, $this->_code.'.log');
+            $errorMessage = Mage::helper('chargepayment')->__('Your payment was not completed.'. $Api->getExceptionState()->getErrorMessage().' and try again or contact customer support.');
+            Mage::throwException($errorMessage);
         }
 
         if($result->isValid()) {
@@ -270,17 +272,19 @@ abstract class CheckoutApi_ChargePayment_Model_Checkout extends Mage_Payment_Mod
         $order          = $payment->getOrder();
 
         $Api                    = CheckoutApi_Api::getApi(array('mode'=>$this->getEndpointMode()));
-        $amount                 = $order->getGrandTotal();
-        $refundData['value']    = $Api->valueToDecimal($amount, $order->getOrderCurrencyCode());
-
-        try {
-            $result = $Api->refundCharge($refundData);
-        } catch (Exception $e) {
-            Mage::log('Please make sure connection failures are properly logged. Action - Refund', null, $this->_code.'.log');
-        }
+        $isCurrentCurrency      = $payment->getAdditionalInformation('use_current_currency');
+        $amount                 = $isCurrentCurrency ? $order->getGrandTotal() : $order->getBaseGrandTotal();
+        $refundData['value']    = $Api->valueToDecimal($amount, $isCurrentCurrency ? $order->getOrderCurrencyCode(): $order->getBaseCurrencyCode());
+        $result                 = $Api->refundCharge($refundData);
 
         if (is_object($result) && method_exists($result, 'toArray')) {
             Mage::log($result->toArray(), null, $this->_code.'.log');
+        }
+
+        if ($Api->getExceptionState()->hasError()) {
+            Mage::log($Api->getExceptionState()->getErrorMessage(), null, $this->_code.'.log');
+            $errorMessage = Mage::helper('chargepayment')->__('Your payment was not completed.'. $Api->getExceptionState()->getErrorMessage().' and try again or contact customer support.');
+            Mage::throwException($errorMessage);
         }
 
         if(!$result->isValid()) {
@@ -324,15 +328,16 @@ abstract class CheckoutApi_ChargePayment_Model_Checkout extends Mage_Payment_Mod
         $voidData       = $this->_getVoidChargeData($payment);
 
         $Api            = CheckoutApi_Api::getApi(array('mode'=>$this->getEndpointMode()));
-
-        try {
-            $result = $Api->voidCharge($voidData);
-        } catch (Exception $e) {
-            Mage::log('Please make sure connection failures are properly logged. Action - Void', null, $this->_code.'.log');
-        }
+        $result         = $Api->voidCharge($voidData);
 
         if (is_object($result) && method_exists($result, 'toArray')) {
             Mage::log($result->toArray(), null, $this->_code . '.log');
+        }
+
+        if ($Api->getExceptionState()->hasError()) {
+            Mage::log($Api->getExceptionState()->getErrorMessage(), null, $this->_code.'.log');
+            $errorMessage = Mage::helper('chargepayment')->__('Your payment was not completed.'. $Api->getExceptionState()->getErrorMessage().' and try again or contact customer support.');
+            Mage::throwException($errorMessage);
         }
 
         if($result->isValid()) {
@@ -415,5 +420,16 @@ abstract class CheckoutApi_ChargePayment_Model_Checkout extends Mage_Payment_Mod
      */
     public function getNewOrderStatus() {
         return Mage::helper('chargepayment')->getConfigData($this->_code, 'order_status');
+    }
+
+    /**
+     * Return config value for using currency in payments
+     *
+     * @return mixed
+     *
+     * @version 20160301
+     */
+    public function getIsUseCurrentCurrency() {
+        return Mage::helper('chargepayment')->getConfigData($this->_code, 'current_currency');
     }
 }

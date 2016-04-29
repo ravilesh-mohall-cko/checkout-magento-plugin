@@ -1584,14 +1584,14 @@ class CheckoutApi_Client_ClientGW3 extends CheckoutApi_Client_Client
       $zeroDecimalCurencyList = array('BYR', 'XOF', 'BIF', 'XAF', 'KMF', 'XOF', 'DJF', 'XPF', 'GNF', 'JPY', 'KRW', 'PYG', 'RWF', 'VUV', 'VND');
 
       if (in_array($currency, $threeDecimalCurrencyList)) { 
-        $value = (round($amount,3) * 1000);
+        $value = (int) ($amount * 1000);
         
       } elseif (in_array($currency, $zeroDecimalCurencyList)){
          $value = floor ($amount);   
          
       } else {
+        $value = (int) ($amount * 100);
         
-        $value = (round($amount,2) * 100);
       }
       
       return $value;

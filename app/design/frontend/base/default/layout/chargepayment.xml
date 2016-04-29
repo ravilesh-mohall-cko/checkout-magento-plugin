@@ -12,10 +12,18 @@
     <chargepayment_cards_index>
         <update handle="customer_account"/>
         <reference name="my.account.wrapper">
-            <block type="chargepayment/customer_cards" name="unique_layout_name" template="checkoutapi/customer/cardlist.phtml"/>
+            <block type="chargepayment/customer_cards" name="customer.account.card.list" template="checkoutapi/customer/cardlist.phtml"/>
             <block type="customer/account_dashboard" name="customer.account.link.back" template="customer/account/link/back.phtml" />
         </reference>
     </chargepayment_cards_index>
+    <chargepayment_api_complete>
+        <reference name="root">
+            <action method="setTemplate"><template>page/2columns-right.phtml</template></action>
+        </reference>
+        <reference name="content">
+            <block type="page/html" name="chargepayment.local.complete" template="checkoutapi/chargepayment/local/complete.phtml"/>
+        </reference>
+    </chargepayment_api_complete>
     <checkout_onepage_index translate="label">
         <reference name="head">
             <action method="addJs"><script>checkout_api/chargepayment.js</script></action>

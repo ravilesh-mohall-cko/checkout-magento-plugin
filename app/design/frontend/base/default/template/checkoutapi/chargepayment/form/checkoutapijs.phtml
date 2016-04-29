@@ -12,6 +12,8 @@
         <?php if ($tokenResult['success']):?>
         <li>
             <input type="hidden" id="cko-card-token" name="payment[checkout_card_token]" value=""/>
+            <input type="hidden" id="cko-lp-redirectUrl" name="payment[lp_redirect_url]" value=""/>
+            <input type="hidden" id="cko-lp-lpName" name="payment[lp_name]" value=""/>
             <script type="text/javascript">
                 Checkout.render({
                     debugMode:                  '<?php echo $this->getDebugMode() ? 'true': 'false';?>',
@@ -42,9 +44,11 @@
                         widgetIconSize:         '<?php echo $this->getWidgetIconSize();?>'
                     },
                     cardFormMode:               '<?php echo $this->getCardFormMode();?>',
-                    cardCharged: function(event){
-                        console.log(event);
-                        // do work
+                    lpCharged: function (event){
+                        document.getElementById('cko-lp-redirectUrl').value = event.data.redirectUrl;
+                        document.getElementById('cko-lp-lpName').value      = event.data.lpName;
+
+                        jsCheckoutApi.saveOrderSubmit();
                     },
                     cardTokenised: function(event){
                         if (document.getElementById('cko-card-token').value.length === 0 || document.getElementById('cko-card-token').value != event.data.cardToken) {

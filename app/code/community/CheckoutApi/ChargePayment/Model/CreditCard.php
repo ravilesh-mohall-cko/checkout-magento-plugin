@@ -118,23 +118,25 @@ class CheckoutApi_ChargePayment_Model_CreditCard extends CheckoutApi_ChargePayme
      * @version 20151006
      */
     public function authorize(Varien_Object $payment, $amount) {
-        $isDebug        = $this->isDebug();
-        $autoCapture    = $this->_isAutoCapture();
+        $isDebug            = $this->isDebug();
+        $autoCapture        = $this->_isAutoCapture();
+        $isCurrentCurrency  = $this->getIsUseCurrentCurrency();
 
         $Api        = CheckoutApi_Api::getApi(array('mode'=>$this->getEndpointMode()));
         $order      = $payment->getOrder();
-        $amount     = $order->getGrandTotal();
-        $amount     = $Api->valueToDecimal($amount, $order->getOrderCurrencyCode());
+        $amount     = $isCurrentCurrency ? $order->getGrandTotal() : $order->getBaseGrandTotal();
+        $amount     = $Api->valueToDecimal($amount, $isCurrentCurrency ? $order->getOrderCurrencyCode() : $order->getBaseCurrencyCode());
         $cardCharge = $this->_getCardCharge($payment, $amount);
-
-        try {
-            $result = $Api->createCharge($cardCharge);
-        } catch (Exception $e) {
-            Mage::log('Please make sure connection failures are properly logged. Action - Authorize', null, $this->_code.'.log');
-        }
+        $result     = $Api->createCharge($cardCharge);
 
         if (is_object($result) && method_exists($result, 'toArray')) {
             Mage::log($result->toArray(), null, $this->_code.'.log');
+        }
+
+        if ($Api->getExceptionState()->hasError()) {
+            Mage::log($Api->getExceptionState()->getErrorMessage(), null, $this->_code.'.log');
+            $errorMessage = Mage::helper('chargepayment')->__('Your payment was not completed.'. $Api->getExceptionState()->getErrorMessage().' and try again or contact customer support.');
+            Mage::throwException($errorMessage);
         }
 
         if($result->isValid()) {
@@ -162,6 +164,7 @@ class CheckoutApi_ChargePayment_Model_CreditCard extends CheckoutApi_ChargePayme
 
                     $payment->setTransactionId($entityId);
                     $payment->setIsTransactionClosed(0);
+                    $payment->setAdditionalInformation('use_current_currency', $isCurrentCurrency);
 
                     if ($autoCapture) {
                         $payment->setIsTransactionPending(true);
@@ -215,7 +218,8 @@ class CheckoutApi_ChargePayment_Model_CreditCard extends CheckoutApi_ChargePayme
      * @version 20151007
      */
     protected function _getCardCharge(Varien_Object $payment, $amount) {
-        $secretKey      = $this->_getSecretKey();
+        $secretKey          = $this->_getSecretKey();
+        $isCurrentCurrency  = $this->getIsUseCurrentCurrency();
 
         if (!$secretKey) {
             Mage::throwException(Mage::helper('chargepayment')->__('Payment method is not available.'));
@@ -234,7 +238,7 @@ class CheckoutApi_ChargePayment_Model_CreditCard extends CheckoutApi_ChargePayme
         $billingAddress     = $order->getBillingAddress();
         $shippingAddress    = $order->getShippingAddress();
         $orderedItems       = $order->getAllItems();
-        $currencyDesc       = $order->getOrderCurrencyCode();
+        $currencyDesc       = $isCurrentCurrency ? $order->getOrderCurrencyCode() : $order->getBaseCurrencyCode();
         $orderId            = $order->getIncrementId();
 
         $street = Mage::helper('customer/address')

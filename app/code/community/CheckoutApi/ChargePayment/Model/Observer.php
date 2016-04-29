@@ -80,7 +80,10 @@ class CheckoutApi_ChargePayment_Model_Observer {
         if ($order && $order->getId()) {
             $payment = $order->getPayment();
             if ($payment &&
-                ($payment->getMethod() == CheckoutApi_ChargePayment_Helper_Data::CODE_CREDIT_CARD || $payment->getMethod() == CheckoutApi_ChargePayment_Helper_Data::CODE_CREDIT_CARD_JS)) {
+                ($payment->getMethod() == CheckoutApi_ChargePayment_Helper_Data::CODE_CREDIT_CARD
+                    || $payment->getMethod() == CheckoutApi_ChargePayment_Helper_Data::CODE_CREDIT_CARD_JS
+                )
+            ) {
                 /* @var $controller Mage_Core_Controller_Varien_Action */
                 $controller = $observer->getEvent()->getData('controller_action');
                 $result = Mage::helper('core')->jsonDecode(
@@ -91,15 +94,33 @@ class CheckoutApi_ChargePayment_Model_Observer {
                 if (empty($result['error'])) {
                     $redirectUrl        = Mage::getUrl('checkout/onepage/success', array('_secure'=>true));
                     $session            = Mage::getSingleton('chargepayment/session_quote');
+
+                    $result['success']      = true;
+                    $result['is3d']         = false;
+                    $result['redirect_url'] = $redirectUrl;
+
+                    /* Local Payment */
+                    $isLocalPayment = $session->getIsLocalPayment();
+                    $lpRedirectUrl  = $session->getLpRedirectUrl();
+
+
+                    /* Normal Payment */
                     $is3d               = $session->getIs3d();
                     $paymentRedirectUrl = $session->getPaymentRedirectUrl();
 
-                    $result['success']      = true;
-                    $result['is3d']         = !$is3d ? false : true;
-                    $result['redirect_url'] = !empty($paymentRedirectUrl) ? $paymentRedirectUrl : $redirectUrl;
+                    if ($isLocalPayment) {
+                        $result['success']      = true;
+                        $result['is3d']         = false;
+                        $result['redirect_url'] = $lpRedirectUrl;
 
-                    /* Restore session for 3d payment */
-                    if ($is3d) {
+                        $session->unsetData('is_local_payment');
+                        $session->unsetData('lp_redirect_url');
+                    } else if ($is3d) {
+                        /* Restore session for 3d payment */
+                        $result['success']      = true;
+                        $result['is3d']         = true;
+                        $result['redirect_url'] = $paymentRedirectUrl;
+
                         $order->setStatus(Mage_Sales_Model_Order::STATE_PENDING_PAYMENT);
                         $order->save();
 
@@ -113,37 +134,16 @@ class CheckoutApi_ChargePayment_Model_Observer {
                                 ->save();
                             Mage::getSingleton('checkout/session')->replaceQuote($quote);
                         }
-                    }
 
-                    $session->unsetData('is3d');
-                    $session->unsetData('payment_redirect_url');
+                        $session->unsetData('is3d');
+                        $session->unsetData('payment_redirect_url');
+                    }
 
                     $controller->getResponse()->clearHeader('Location');
                     $controller->getResponse()->setBody(Mage::helper('core')->jsonEncode($result));
                 }
             }
         }
-
-        return $this;
-    }
-
-    /**
-     * Update all edit increments for all orders if module is enabled.
-     * Needed for correct work of edit orders in Admin area.
-     *
-     * @param Varien_Event_Observer $observer
-     * @return Mage_Authorizenet_Model_Directpost_Observer
-     */
-    public function updateAllEditIncrements(Varien_Event_Observer $observer)
-    {
-//        /* @var $order Mage_Sales_Model_Order */
-//        $order = $observer->getEvent()->getData('order');
-//        Mage::helper('authorizenet')->updateOrderEditIncrements($order);
-//
-//        Mage::app()->getResponse()->setRedirect();
-//        Mage::app()->getResponse()->sendResponse();
-//
-//        exit(0);
 
         return $this;
     }

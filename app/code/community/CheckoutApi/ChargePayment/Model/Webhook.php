@@ -14,6 +14,7 @@ class CheckoutApi_ChargePayment_Model_Webhook
     const EVENT_TYPE_CHARGE_CAPTURED    = 'charge.captured';
     const EVENT_TYPE_CHARGE_REFUNDED    = 'charge.refunded';
     const EVENT_TYPE_CHARGE_VOIDED      = 'charge.voided';
+    const EVENT_TYPE_INVOICE_CANCELLED  = 'invoice.cancelled';
 
     /**
      * Check if Webhook data valid
@@ -24,7 +25,7 @@ class CheckoutApi_ChargePayment_Model_Webhook
      * @version 20151113
      */
     public function isValidResponse($response) {
-        if (empty($response)) {
+        if (empty($response) || !property_exists($response->message, 'trackId')) {
             return false;
         }
 
@@ -72,6 +73,12 @@ class CheckoutApi_ChargePayment_Model_Webhook
             return false;
         }
 
+        if (Mage::getSingleton('core/session')->getData('checkout_api_capture_' . $trackId)) {
+            return false;
+        }
+
+        Mage::getSingleton('core/session')->setData('checkout_api_capture_' . $trackId, true);
+
         $amount     = $order->getBaseGrandTotal();
 
         $payment = $order->getPayment();
@@ -101,13 +108,13 @@ class CheckoutApi_ChargePayment_Model_Webhook
 
             $order->setStatus(Mage_Sales_Model_Order::STATE_PROCESSING);
             $order->save();
-
         } catch (Mage_Core_Exception $e) {
             Mage::log($e->getMessage(), null, self::LOG_FILE);
         }
 
         $order->setChargeIsCaptured(1);
         $order->save();
+        Mage::getSingleton('core/session')->unsetData('checkout_api_capture_' . $trackId);
 
         return true;
     }
@@ -121,8 +128,15 @@ class CheckoutApi_ChargePayment_Model_Webhook
      * @version 20151116
      */
     public function isValidPublicKey($key) {
-        $publicKey  = Mage::getModel('chargepayment/creditCard')->getPublicKey();
-        $result     = $publicKey === $key ? true : false;
+        if (empty($key)) {
+            Mage::log("Public shared keys is empty.", null, self::LOG_FILE);
+            return false;
+        }
+
+        $publicKey          = Mage::getModel('chargepayment/creditCard')->getPublicKey();
+        $publicSharedKey    = Mage::getModel('chargepayment/creditCardJs')->getPublicKeyWebHook();
+
+        $result     = $publicKey === $key || $publicSharedKey === $key ? true : false;
 
         if (!$result) {
             Mage::log("Public shared keys {$key} (API) and {$publicKey} (Magento) do not match.", null, self::LOG_FILE);
@@ -176,17 +190,22 @@ class CheckoutApi_ChargePayment_Model_Webhook
                 }
             }
 
+            $isCurrentCurrency = $order->getPayment()->getAdditionalInformation('use_current_currency');
+
             $amountDecimal  = $response->message->value;
             $liveMode       = $response->message->liveMode;
             $Api            = CheckoutApi_Api::getApi(array('mode' => $liveMode ? CheckoutApi_ChargePayment_Helper_Data::API_MODE_LIVE : CheckoutApi_ChargePayment_Helper_Data::API_MODE_SANDBOX));
-            $amount         = $Api->decimalToValue($amountDecimal, $order->getOrderCurrencyCode());
 
-            // Allowed currencies
-            $allowedCurrencies  = Mage::getModel('directory/currency')->getConfigAllowCurrencies();
-            $rates              = Mage::getModel('directory/currency')->getCurrencyRates($order->getBaseCurrencyCode(), array_values($allowedCurrencies));
-            $amount             = $amount/$rates[$order->getOrderCurrencyCode()];
-            $amount             =  Mage::app()->getStore()->roundPrice($amount);
-            $amountOrder        = $Api->valueToDecimal($order->getGrandTotal(), $order->getOrderCurrencyCode());
+            if ($isCurrentCurrency) {
+                // Allowed currencies
+                $amount             = $Api->decimalToValue($amountDecimal, $order->getOrderCurrencyCode());
+                $amount             = $amount/$order->getBaseToOrderRate();
+                $amount             =  Mage::app()->getStore()->roundPrice($amount);
+                $amountOrder        = $Api->valueToDecimal($order->getGrandTotal(), $order->getOrderCurrencyCode());
+            } else {
+                $amount             = $Api->decimalToValue($amountDecimal, $order->getBaseCurrencyCode());
+                $amountOrder        = $order->getBaseGrandTotal();
+            }
 
             if ($amountDecimal < $amountOrder) {
                 $data['adjustment_negative'] = $order->getBaseGrandTotal() - $amount;
@@ -321,15 +340,16 @@ class CheckoutApi_ChargePayment_Model_Webhook
         $session        = Mage::getSingleton('chargepayment/session_quote');
         $Api            = CheckoutApi_Api::getApi(array('mode' => $session->getEndpointMode()));
         $verifyParams   = array('paymentToken' => $responseToken, 'authorization' => $session->getSecretKey());
-
-        try {
-            $response = $Api->verifyChargePaymentToken($verifyParams);
-        } catch (Exception $e) {
-            Mage::log('Please make sure connection failures are properly logged. Action - Authorize By Payment Token', null, $this->_code.'.log');
-        }
+        $response       = $Api->verifyChargePaymentToken($verifyParams);
 
         if (is_object($response) && method_exists($response, 'toArray')) {
             Mage::log($response->toArray(), null, self::LOG_FILE);
+        }
+
+        if ($Api->getExceptionState()->hasError()) {
+            Mage::log($Api->getExceptionState()->getErrorMessage(), null, $this->_code.'.log');
+            $errorMessage = Mage::helper('chargepayment')->__('Your payment was not completed.'. $Api->getExceptionState()->getErrorMessage().' and try again or contact customer support.');
+            Mage::throwException($errorMessage);
         }
 
         if(!$response->isValid() || !$this->_responseValidation($response)) {

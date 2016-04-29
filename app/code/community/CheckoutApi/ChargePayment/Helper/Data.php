@@ -8,7 +8,7 @@ class CheckoutApi_ChargePayment_Helper_Data  extends Mage_Core_Helper_Abstract
 {
     const CODE_CREDIT_CARD                  = 'checkoutapicard';
     const CODE_CREDIT_CARD_JS               = 'checkoutapijs';
-    const JS_PATH_CARD_TOKEN                = 'https://cdn3.checkout.com/sandbox/js/checkout.js';
+    const JS_PATH_CARD_TOKEN                = 'https://cdn.checkout.com/sandbox/js/checkout.js';
     const JS_PATH_CARD_TOKEN_LIVE           = 'https://cdn3.checkout.com/js/checkout.js';
 
     const CREDIT_CARD_CHARGE_MODE_NOT_3D    = 1;
