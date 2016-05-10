@@ -1,12 +1,12 @@
 <?php
 /**
- * Payment Info Block for Checkoutapicard, $_infoBlockType
+ * Payment Info Block for CheckoutApiCard, $_infoBlockType
  *
- * Class CheckoutApi_ChargePayment_Block_Form_Checkoutapicard
+ * Class CheckoutApi_ChargePayment_Block_Info_CheckoutApiCard
  *
  * @version 20151002
  */
-class CheckoutApi_ChargePayment_Block_Info_Checkoutapicard  extends Mage_Payment_Block_Info_Cc
+class CheckoutApi_ChargePayment_Block_Info_CheckoutApiCard  extends Mage_Payment_Block_Info_Cc
 {
     /**
      * Retrieve credit card type name

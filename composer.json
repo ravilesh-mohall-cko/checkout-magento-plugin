@@ -1,0 +1,33 @@
+{
+  "name": "checkout/checkout-magento-plugin",
+  "type": "magento-module",
+  "description": "Magento Extension for Checkout.com payments",
+  "homepage": "https://github.com/CKOTech/checkout-magento-plugin",
+  "version": "1.0.2",
+  "license": "MIT",
+  "keywords": ["checkout.com","payment","gateway","online payment","checkoutcom","GW3","CKO", "magento"],
+  "authors":[
+    {
+      "name":"Dhiraj Gangoosirdar",
+      "email":"integration@checkout.com",
+      "role": "Developer"
+    }
+  ],
+  "require": {
+    "php": ">5.3.0",
+    "magento-hackathon/magento-composer-installer": "*"
+  },
+  "extra":{
+    "map":[
+      ["app/code/community/CheckoutApi/ChargePayment", "app/code/community/CheckoutApi/ChargePayment"],
+      ["app/design/adminhtml/default/default/layout/chargepayment.xml", "app/design/adminhtml/default/default/layout/chargepayment.xml"],
+      ["app/design/adminhtml/default/default/template/checkoutapi", "app/design/adminhtml/default/default/template/checkoutapi"],
+      ["app/design/frontend/base/default/layout/chargepayment.xml", "app/design/frontend/base/default/layout/chargepayment.xml"],
+      ["app/design/frontend/base/default/template/checkoutapi", "app/design/frontend/base/default/template/checkoutapi"],
+      ["app/etc/modules/CheckoutApi_ChargePayment.xml", "app/etc/modules/CheckoutApi_ChargePayment.xml"],
+      ["js/checkout_api", "js/checkout_api"],
+      ["skin/frontend/base/default/css/checkout-styles.css", "skin/frontend/base/default/css/checkout-styles.css"],
+      ["lib/CheckoutApi", "lib/CheckoutApi"]
+    ]
+  }
+}

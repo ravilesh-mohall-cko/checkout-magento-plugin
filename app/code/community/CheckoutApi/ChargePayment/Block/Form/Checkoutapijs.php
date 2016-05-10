@@ -1,12 +1,12 @@
 <?php
 /**
- * Payment Block for Checkoutapijs, $_formBlockType
+ * Payment Block for CheckoutApiJs, $_formBlockType
  *
- * Class CheckoutApi_ChargePayment_Block_Form_Checkoutapijs
+ * Class CheckoutApi_ChargePayment_Block_Form_CheckoutApiJs
  *
  * @version 20151002
  */
-class CheckoutApi_ChargePayment_Block_Form_Checkoutapijs  extends Mage_Payment_Block_Form_Cc
+class CheckoutApi_ChargePayment_Block_Form_CheckoutApiJs  extends Mage_Payment_Block_Form_Cc
 {
     private $_paymentCode = CheckoutApi_ChargePayment_Helper_Data::CODE_CREDIT_CARD_JS;
 

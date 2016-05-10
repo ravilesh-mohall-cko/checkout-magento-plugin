@@ -1,12 +1,12 @@
 <?php
 /**
- * Payment Block for Checkoutapicard, $_formBlockType
+ * Payment Block for CheckoutApiCard, $_formBlockType
  *
- * Class CheckoutApi_ChargePayment_Block_Form_Checkoutapicard
+ * Class CheckoutApi_ChargePayment_Block_Form_CheckoutApiCard
  *
  * @version 20151002
  */
-class CheckoutApi_ChargePayment_Block_Form_Checkoutapicard  extends Mage_Payment_Block_Form_Cc
+class CheckoutApi_ChargePayment_Block_Form_CheckoutApiCard  extends Mage_Payment_Block_Form_Cc
 {
     /**
      * Set template for checkout page
