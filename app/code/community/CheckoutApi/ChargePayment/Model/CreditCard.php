@@ -11,8 +11,8 @@ class CheckoutApi_ChargePayment_Model_CreditCard extends CheckoutApi_ChargePayme
 {
     protected $_code        = CheckoutApi_ChargePayment_Helper_Data::CODE_CREDIT_CARD;
 
-    protected $_formBlockType = 'chargepayment/form_checkoutapicard';
-    protected $_infoBlockType = 'chargepayment/info_checkoutapicard';
+    protected $_formBlockType = 'chargepayment/form_checkoutApiCard';
+    protected $_infoBlockType = 'chargepayment/info_checkoutApiCard';
 
     /* Const for API */
     const TRANSACTION_INDICATOR_REGULAR     = 1;
@@ -318,6 +318,14 @@ class CheckoutApi_ChargePayment_Model_CreditCard extends CheckoutApi_ChargePayme
 
         $config['shippingDetails']  = $shippingAddressConfig;
         $config['products']         = $products;
+
+        $config['metadata']         = array(
+            'magento_version'   => Mage::getVersion(),
+            'plugin_version'    => Mage::helper('chargepayment')->getExtensionVersion(),
+            'lib_version'       => CheckoutApi_Client_Constant::VERSION,
+            'integration_type'  => 'API',
+            'time'              => Mage::getModel('core/date')->date('Y-m-d H:i:s')
+        );
 
         $result['authorization']    = $secretKey;
         $result['postedParam']      = $config;

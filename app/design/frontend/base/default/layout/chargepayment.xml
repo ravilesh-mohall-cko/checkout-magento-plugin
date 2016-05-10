@@ -27,11 +27,17 @@
     <checkout_onepage_index translate="label">
         <reference name="head">
             <action method="addJs"><script>checkout_api/chargepayment.js</script></action>
+            <action method="addCss"><stylesheet>css/checkout-styles.css</stylesheet></action>
         </reference>
         <reference name="before_body_end">
             <block type="core/text" name="checkoutapijs">
                 <action method="setText" ifconfig="payment/checkoutapijs/active">
                     <content  helper="chargepayment/getJsPathHtml"></content>
+                </action>
+            </block>
+            <block type="core/text" name="checkoutapikit">
+                <action method="setText" ifconfig="payment/checkoutapikit/active">
+                    <content  helper="chargepayment/getKitJsPathHtml"></content>
                 </action>
             </block>
         </reference>
@@ -46,6 +52,11 @@
             <block name="checkoutapi.framePhp" type="chargepayment/framePhp" >
                 <action method="setTemplate" ifconfig="payment/checkoutapicard/active" >
                     <template>checkoutapi/chargepayment/framePhp.phtml</template>
+                </action>
+            </block>
+            <block name="checkoutapi.frameKit" type="chargepayment/frameKit" >
+                <action method="setTemplate" ifconfig="payment/checkoutapikit/active" >
+                    <template>checkoutapi/chargepayment/frameKit.phtml</template>
                 </action>
             </block>
         </reference>

@@ -82,6 +82,7 @@ class CheckoutApi_ChargePayment_Model_Observer {
             if ($payment &&
                 ($payment->getMethod() == CheckoutApi_ChargePayment_Helper_Data::CODE_CREDIT_CARD
                     || $payment->getMethod() == CheckoutApi_ChargePayment_Helper_Data::CODE_CREDIT_CARD_JS
+                    || $payment->getMethod() == CheckoutApi_ChargePayment_Helper_Data::CODE_CREDIT_CARD_KIT
                 )
             ) {
                 /* @var $controller Mage_Core_Controller_Varien_Action */
