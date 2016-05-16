@@ -308,6 +308,10 @@ abstract class CheckoutApi_ChargePayment_Model_Checkout extends Mage_Payment_Mod
         }
 
         $this->_responseValidation($result);
+
+        $payment->setTransactionId($result->getId());
+        $payment->setIsTransactionClosed(1);
+
         $order->setChargeIsRefunded(1);
         $order->save();
 

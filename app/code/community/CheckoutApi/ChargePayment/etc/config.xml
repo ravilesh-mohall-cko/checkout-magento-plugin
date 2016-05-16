@@ -130,6 +130,18 @@
                 <widget_icon_size>small</widget_icon_size>
                 <payment_mode>mixed</payment_mode>
             </checkoutapijs>
+            <checkoutapikit>
+                <active>0</active>
+                <cctypes>AE,VI,MC,DI</cctypes>
+                <title>Checkout.com Credit Card (Checkout Kit)</title>
+                <model>chargepayment/creditCardKit</model>
+                <current_currency>0</current_currency>
+                <order_status>pending</order_status>
+                <allowspecific>0</allowspecific>
+                <mode>sandbox</mode>
+                <is_3d>1</is_3d>
+                <timeout>60</timeout>
+            </checkoutapikit>
         </payment>
     </default>
     <adminhtml>

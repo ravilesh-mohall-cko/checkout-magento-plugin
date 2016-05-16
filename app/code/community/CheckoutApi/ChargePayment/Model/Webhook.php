@@ -108,6 +108,22 @@ class CheckoutApi_ChargePayment_Model_Webhook
 
             $order->setStatus(Mage_Sales_Model_Order::STATE_PROCESSING);
             $order->save();
+
+
+            $order = $modelOrder->loadByIncrementId($trackId);
+
+            if ($order->hasInvoices()) {
+                $invIncrementId = array();
+                foreach ($order->getInvoiceCollection() as $invoice) {
+                    $invoiceIncId[] = $invoice->getIncrementId();
+                }
+
+                $incrementId = $invoiceIncId[0];
+
+                $invoive = Mage::getModel('sales/order_invoice')->loadByIncrementId($incrementId);
+                $invoice->setTransactionId((string)$response->message->id);
+                $invoice->save();
+            }
         } catch (Mage_Core_Exception $e) {
             Mage::log($e->getMessage(), null, self::LOG_FILE);
         }
@@ -133,10 +149,11 @@ class CheckoutApi_ChargePayment_Model_Webhook
             return false;
         }
 
-        $publicKey          = Mage::getModel('chargepayment/creditCard')->getPublicKey();
-        $publicSharedKey    = Mage::getModel('chargepayment/creditCardJs')->getPublicKeyWebHook();
+        $publicKey      = Mage::getModel('chargepayment/creditCard')->getPublicKey();
+        $publicJsKey    = Mage::getModel('chargepayment/creditCardJs')->getPublicKeyWebHook();
+        $publicKitKey   = Mage::getModel('chargepayment/creditCardKit')->getPublicKeyWebHook();
 
-        $result     = $publicKey === $key || $publicSharedKey === $key ? true : false;
+        $result         = $publicKey === $key || $publicJsKey === $key || $publicKitKey === $key ? true : false;
 
         if (!$result) {
             Mage::log("Public shared keys {$key} (API) and {$publicKey} (Magento) do not match.", null, self::LOG_FILE);
@@ -154,10 +171,11 @@ class CheckoutApi_ChargePayment_Model_Webhook
      * @version 20151130
      */
     public function refundOrder($response) {
-        $trackId    = (string)$response->message->trackId;
-        $modelOrder = Mage::getModel('sales/order');
-        $order      = $modelOrder->loadByIncrementId($trackId);
-        $orderId    = $order->getId();
+        $trackId        = (string)$response->message->trackId;
+        $transactionId  = (string)$response->message->id;
+        $modelOrder     = Mage::getModel('sales/order');
+        $order          = $modelOrder->loadByIncrementId($trackId);
+        $orderId        = $order->getId();
 
         if (!$orderId) {
             Mage::log("Cannot refund Order - {$trackId}", null, self::LOG_FILE);
@@ -207,25 +225,36 @@ class CheckoutApi_ChargePayment_Model_Webhook
                 $amountOrder        = $order->getBaseGrandTotal();
             }
 
-            if ($amountDecimal < $amountOrder) {
-                $data['adjustment_negative'] = $order->getBaseGrandTotal() - $amount;
-                $message = Mage::helper('sales')->__('Registered notification about refunded amount of %s.', $order->getBaseCurrency()->formatTxt($amount, array()));
+            if ($amount < $amountOrder) {
+                $data['adjustment_negative']    = $order->getBaseGrandTotal() - $amount;
+                $formattedAmount                = $order->getBaseCurrency()->formatTxt($amount, array());
             } else {
-                $message = Mage::helper('sales')->__('Registered notification about refunded amount of %s.', $order->getBaseCurrency()->formatTxt($order->getBaseGrandTotal(), array()));
+                $formattedAmount    = $order->getBaseCurrency()->formatTxt($order->getBaseGrandTotal(), array());
             }
+
+            $message = Mage::helper('sales')->__('Refunded amount of %s. Transaction ID: "%s"', $formattedAmount, $transactionId);
+
+            $transactionModel = Mage::getModel('sales/order_payment_transaction');
+            $transactionModel
+                ->setOrderPaymentObject($order->getPayment())
+                ->setTxnId($transactionId)
+                ->setParentTxnId((string)$response->message->originalId)
+                ->setTxnType(Mage_Sales_Model_Order_Payment_Transaction::TYPE_REFUND)
+                ->save();
 
             $creditMemo = $service->prepareCreditmemo($data)
                 ->setPaymentRefundDisallowed(true)
                 ->setAutomaticallyCreated(true)
                 ->register()
+                ->setTransactionId((string)$response->message->id)
                 ->addComment((string)$response->message->description)
                 ->save();
 
             $order->setChargeIsRefunded(1);
             $order->addStatusHistoryComment($message);
             $order->setStatus(Mage_Sales_Model_Order::STATE_CLOSED);
-            $order->save();
 
+            $order->save();
         } catch (Mage_Core_Exception $e) {
             Mage::log($e->getMessage(), null, self::LOG_FILE);
         }

@@ -1,0 +1,15 @@
+.checkout-kit-card-name-block, .checkout-kit-card-block {
+    margin-bottom: 8px;
+}
+
+.checkout-kit-date-block {
+    display: flex;
+    display: -webkit-flex;
+    max-width: 365px;
+    width: 100%;
+    justify-content: space-between;
+}
+
+.checkout-kit-date-block .input-text {
+    width: 98%;
+}
