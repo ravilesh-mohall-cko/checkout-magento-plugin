@@ -3,7 +3,7 @@
   "type": "magento-module",
   "description": "Magento Extension for Checkout.com payments",
   "homepage": "https://github.com/CKOTech/checkout-magento-plugin",
-  "version": "2.1.2",
+  "version": "2.2.1",
   "license": "MIT",
   "keywords": ["checkout.com","payment","gateway","online payment","checkoutcom","GW3","CKO", "magento"],
   "authors":[
