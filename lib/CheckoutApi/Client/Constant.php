@@ -24,6 +24,8 @@ final class CheckoutApi_Client_Constant
 	const AUTOCAPUTURE_AUTH = 'n';
 	const VERSION = 'v2';
     const STATUS_CAPTURE = 'Captured';
+	const VERSION = '1.2.3';
+        const STATUS_CAPTURE = 'Captured';
 
 
 }
