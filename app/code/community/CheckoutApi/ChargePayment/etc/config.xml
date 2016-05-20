@@ -1,7 +1,7 @@
 <config>
     <modules>
         <CheckoutApi_ChargePayment>
-            <version>2.2.2</version>
+            <version>2.2.4</version>
         </CheckoutApi_ChargePayment>
     </modules>
     <global>
