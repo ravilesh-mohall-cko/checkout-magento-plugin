@@ -43,6 +43,7 @@ class CheckoutApi_ChargePayment_Model_CreditCardJs extends CheckoutApi_ChargePay
 
         if ($Api->getExceptionState()->hasError()) {
             Mage::log($Api->getExceptionState()->getErrorMessage(), null, $this->_code.'.log');
+            Mage::log($Api->getExceptionState(), null, $this->_code.'.log');
             $errorMessage = Mage::helper('chargepayment')->__('Your payment was not completed.'. $Api->getExceptionState()->getErrorMessage().' and try again or contact customer support.');
             Mage::throwException($errorMessage);
         }
@@ -166,6 +167,7 @@ class CheckoutApi_ChargePayment_Model_CreditCardJs extends CheckoutApi_ChargePay
 
             if ($Api->getExceptionState()->hasError()) {
                 Mage::log($Api->getExceptionState()->getErrorMessage(), null, $this->_code.'.log');
+                Mage::log($Api->getExceptionState(), null, $this->_code.'.log');
                 $errorMessage = Mage::helper('chargepayment')->__('Your payment was not completed.'. $Api->getExceptionState()->getErrorMessage().' and try again or contact customer support.');
                 Mage::throwException($errorMessage);
             }
@@ -225,6 +227,7 @@ class CheckoutApi_ChargePayment_Model_CreditCardJs extends CheckoutApi_ChargePay
 
         if ($Api->getExceptionState()->hasError()) {
             Mage::log($Api->getExceptionState()->getErrorMessage(), null, $this->_code.'.log');
+            Mage::log($Api->getExceptionState(), null, $this->_code.'.log');
             $errorMessage = Mage::helper('chargepayment')->__('Your payment was not completed.'. $Api->getExceptionState()->getErrorMessage().' and try again or contact customer support.');
             Mage::throwException($errorMessage);
         }
@@ -345,7 +348,7 @@ class CheckoutApi_ChargePayment_Model_CreditCardJs extends CheckoutApi_ChargePay
                 'quoteId'           => $this->_getQuote()->getId(),
                 'magento_version'   => Mage::getVersion(),
                 'plugin_version'    => Mage::helper('chargepayment')->getExtensionVersion(),
-                'lib_version'       => CheckoutApi_Client_Constant::VERSION,
+                'lib_version'       => CheckoutApi_Client_Constant::LIB_VERSION,
                 'integration_type'  => 'JS',
                 'time'              => Mage::getModel('core/date')->date('Y-m-d H:i:s')
             )
