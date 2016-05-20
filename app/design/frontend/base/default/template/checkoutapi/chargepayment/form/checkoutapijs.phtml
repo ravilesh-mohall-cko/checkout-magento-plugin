@@ -15,47 +15,69 @@
             <input type="hidden" id="cko-lp-redirectUrl" name="payment[lp_redirect_url]" value=""/>
             <input type="hidden" id="cko-lp-lpName" name="payment[lp_name]" value=""/>
             <script type="text/javascript">
-                Checkout.render({
-                    debugMode:                  '<?php echo $this->getDebugMode() ? 'true': 'false';?>',
-                    renderMode:                 '<?php echo $this->getRenderMode();?>',
-                    namespace:                  '<?php echo $this->getNamespace();?>',
-                    publicKey:                  '<?php echo $this->getPublicKey();?>',
-                    paymentToken:               '<?php echo $tokenResult['token'];?>',
-                    customerEmail:              '<?php echo $tokenResult['customerEmail'];?>',
-                    customerName:               '<?php echo $tokenResult['customerName'];?>',
-                    value:                      '<?php echo $tokenResult['value'];?>',
-                    currency:                   '<?php echo $tokenResult['currency'];?>',
-                    widgetContainerSelector:    '#payment_form_<?php echo $this->getMethodCode() ?>',
-                    paymentMode:                '<?php echo $this->getPaymentMode();?>',
-                    logoUrl:                    '<?php echo $this->getLogoUrl();?>',
-                    themeColor:                 '<?php echo $this->getThemeColor();?>',
-                    buttonColor:                '<?php echo $this->getButtonColor();?>',
-                    iconColor:                  '<?php echo $this->getIconColor();?>',
-                    useCurrencyCode:            '<?php echo $this->isUseCurrencyCode() ? 'true' : 'false';?>',
-                    title:                      '<?php echo $this->getTitle();?>',
-                    widgetColor:                '<?php echo $this->getWidgetColor();?>',
-                    buttonLabelColor:           '<?php echo $this->getButtonLabelColor();?>',
-                    styling:                    {
-                        formButtonColor:        '<?php echo $this->getFormButtonColor();?>',
-                        formButtonColorLabel:   '<?php echo $this->getFormButtonColorLabel();?>',
-                        overlayShade:           '<?php echo $this->getOverlayShade();?>',
-                        overlayOpacity:         '<?php echo $this->getOverlayOpacity();?>',
-                        showMobileIcons:        '<?php echo $this->isShowMobileIcons() ? 'true' : 'false';?>',
-                        widgetIconSize:         '<?php echo $this->getWidgetIconSize();?>'
-                    },
-                    cardFormMode:               '<?php echo $this->getCardFormMode();?>',
-                    lpCharged: function (event){
-                        document.getElementById('cko-lp-redirectUrl').value = event.data.redirectUrl;
-                        document.getElementById('cko-lp-lpName').value      = event.data.lpName;
+                jQuery(document).ready(function(){
+                    CKOAPIJS.render({
+                        debugMode:                  '<?php echo $this->getDebugMode() ? 'true': 'false';?>',
+                        renderMode:                 '<?php echo $this->getRenderMode();?>',
+                        namespace:                  '<?php echo $this->getNamespace();?>',
+                        publicKey:                  '<?php echo $this->getPublicKey();?>',
+                        paymentToken:               '<?php echo $tokenResult['token'];?>',
+                        customerEmail:              '<?php echo $tokenResult['customerEmail'];?>',
+                        customerName:               '<?php echo $tokenResult['customerName'];?>',
+                        value:                      '<?php echo $tokenResult['value'];?>',
+                        currency:                   '<?php echo $tokenResult['currency'];?>',
+                        widgetContainerSelector:    '#payment_form_<?php echo $this->getMethodCode() ?>',
+                        paymentMode:                '<?php echo $this->getPaymentMode();?>',
+                        logoUrl:                    '<?php echo $this->getLogoUrl();?>',
+                        themeColor:                 '<?php echo $this->getThemeColor();?>',
+                        buttonColor:                '<?php echo $this->getButtonColor();?>',
+                        iconColor:                  '<?php echo $this->getIconColor();?>',
+                        useCurrencyCode:            '<?php echo $this->isUseCurrencyCode() ? 'true' : 'false';?>',
+                        title:                      '<?php echo $this->getTitle();?>',
+                        widgetColor:                '<?php echo $this->getWidgetColor();?>',
+                        buttonLabelColor:           '<?php echo $this->getButtonLabelColor();?>',
+                        styling:                    {
+                            formButtonColor:        '<?php echo $this->getFormButtonColor();?>',
+                            formButtonColorLabel:   '<?php echo $this->getFormButtonColorLabel();?>',
+                            overlayShade:           '<?php echo $this->getOverlayShade();?>',
+                            overlayOpacity:         '<?php echo $this->getOverlayOpacity();?>',
+                            showMobileIcons:        '<?php echo $this->isShowMobileIcons() ? 'true' : 'false';?>',
+                            widgetIconSize:         '<?php echo $this->getWidgetIconSize();?>'
+                        },
+                        cardFormMode:               '<?php echo $this->getCardFormMode();?>',
+                        lightboxActivated : function(event) {
+                            if ($('checkout-api-default-hover') !== null && $('checkout-api-default-hover').length > 0) {
+                                $('checkout-api-default-hover').hide();
+                            }
+                        },
+                        lightboxDeactivated: function(event) {
+                            if ($('checkout-api-default-hover') !== null && $('checkout-api-default-hover').length > 0) {
+                                $('checkout-api-default-hover').hide();
+                            }
 
-                        jsCheckoutApi.saveOrderSubmit();
-                    },
-                    cardTokenised: function(event){
-                        if (document.getElementById('cko-card-token').value.length === 0 || document.getElementById('cko-card-token').value != event.data.cardToken) {
-                            document.getElementById('cko-card-token').value = event.data.cardToken;
-                            jsCheckoutApi.saveOrderSubmit();
+                            $('checkout-api-js-hover').hide();
+                        },
+                        lpCharged: function (event){
+                            if ($('checkout-api-js-hover') !== null && $('checkout-api-js-hover').length > 0) {
+                                $('checkout-api-js-hover').show();
+                            }
+
+                            document.getElementById('cko-lp-redirectUrl').value = event.data.redirectUrl;
+                            document.getElementById('cko-lp-lpName').value      = event.data.lpName;
+
+                            window.checkoutApiSubmitOrder();
+                        },
+                        cardTokenised: function(event){
+                            if (document.getElementById('cko-card-token').value.length === 0 || document.getElementById('cko-card-token').value != event.data.cardToken) {
+                                document.getElementById('cko-card-token').value = event.data.cardToken;
+                                if ($('checkout-api-js-hover') !== null && $('checkout-api-js-hover').length > 0) {
+                                    $('checkout-api-js-hover').show();
+                                }
+
+                                window.checkoutApiSubmitOrder();
+                            }
                         }
-                    }
+                    });
                 });
             </script>
         </li>

@@ -67,22 +67,14 @@
             </chargepayment>
         </routers>
         <events>
-            <checkout_submit_all_after>
+            <sales_order_save_after>
                 <observers>
                     <creditcard_save_order_after_submit>
                         <class>chargepayment/observer</class>
                         <method>saveOrderAfterSubmit</method>
                     </creditcard_save_order_after_submit>
                 </observers>
-            </checkout_submit_all_after>
-            <controller_action_postdispatch_checkout_onepage_saveOrder>
-                <observers>
-                    <creditcard_save_order_onepage>
-                        <class>chargepayment/observer</class>
-                        <method>addAdditionalFieldsToResponseFrontend</method>
-                    </creditcard_save_order_onepage>
-                </observers>
-            </controller_action_postdispatch_checkout_onepage_saveOrder>
+            </sales_order_save_after>
         </events>
     </frontend>
     <admin>

@@ -9,7 +9,6 @@
     $_isPhp         = $this->isPhpApiPaymentMethod();
     $_controller    = Mage::app()->getFrontController()->getRequest()->getControllerName();
     $_code          = $this->getPaymentCode();
-    $_saveOrderUrl  = $this->getControllerUrl();
     $currentCode    = Mage::app()->getStore()->getCurrentCurrencyCode();
     $baseCode       = Mage::app()->getStore()->getBaseCurrencyCode();
 ?>
@@ -18,7 +17,7 @@
         var phpCheckoutApi = new checkoutApi(
             '<?php echo $_code ?>',
             '<?php echo $_controller ?>',
-            '<?php echo $_saveOrderUrl ?>'
+            null
         );
 
         <?php if ($currentCode !== $baseCode):?>
