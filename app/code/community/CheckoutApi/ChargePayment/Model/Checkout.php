@@ -158,6 +158,7 @@ abstract class CheckoutApi_ChargePayment_Model_Checkout extends Mage_Payment_Mod
 
         if ($Api->getExceptionState()->hasError()) {
             Mage::log($Api->getExceptionState()->getErrorMessage(), null, $this->_code.'.log');
+            Mage::log($Api->getExceptionState(), null, $this->_code.'.log');
             $errorMessage = Mage::helper('chargepayment')->__('Your payment was not completed.'. $Api->getExceptionState()->getErrorMessage().' and try again or contact customer support.');
             Mage::throwException($errorMessage);
         }
@@ -283,6 +284,7 @@ abstract class CheckoutApi_ChargePayment_Model_Checkout extends Mage_Payment_Mod
 
         if ($Api->getExceptionState()->hasError()) {
             Mage::log($Api->getExceptionState()->getErrorMessage(), null, $this->_code.'.log');
+            Mage::log($Api->getExceptionState(), null, $this->_code.'.log');
             $errorMessage = Mage::helper('chargepayment')->__('Your payment was not completed.'. $Api->getExceptionState()->getErrorMessage().' and try again or contact customer support.');
             Mage::throwException($errorMessage);
         }
@@ -340,6 +342,7 @@ abstract class CheckoutApi_ChargePayment_Model_Checkout extends Mage_Payment_Mod
 
         if ($Api->getExceptionState()->hasError()) {
             Mage::log($Api->getExceptionState()->getErrorMessage(), null, $this->_code.'.log');
+            Mage::log($Api->getExceptionState(), null, $this->_code.'.log');
             $errorMessage = Mage::helper('chargepayment')->__('Your payment was not completed.'. $Api->getExceptionState()->getErrorMessage().' and try again or contact customer support.');
             Mage::throwException($errorMessage);
         }
