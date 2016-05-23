@@ -24,6 +24,68 @@ class CheckoutApi_ChargePayment_Model_CreditCardJs extends CheckoutApi_ChargePay
     const PAYMENT_MODE_LOCAL_PAYMENT    = 'localpayment';
 
     /**
+     * Return to checkout page
+     *
+     * @return bool|string
+     *
+     */
+    public function getCheckoutRedirectUrl() {
+        $controllerName     = (string)Mage::app()->getFrontController()->getRequest()->getControllerName();
+
+        if ($controllerName === 'onepage') {
+            return false;
+        }
+
+        $requestData        = Mage::app()->getRequest()->getParam('payment');
+        $cardToken          = !empty($requestData['checkout_card_token']) ? $requestData['checkout_card_token'] : null;
+        $lpRedirectUrl      = !empty($requestData['lp_redirect_url']) ? $requestData['lp_redirect_url'] : NULL;
+        $session            = Mage::getSingleton('chargepayment/session_quote');
+
+        if (!is_null($cardToken) || !is_null($lpRedirectUrl)) {
+            return false;
+        }
+
+        $params['method'] = $this->_code;
+
+        $session->setJsCheckoutApiParams($params);
+
+        return Mage::helper('checkout/url')->getCheckoutUrl();
+    }
+
+    /**
+     * Return redirect url for 3d and local payments
+     *
+     * @return bool
+     */
+    public function getOrderPlaceRedirectUrl() {
+        $session    = Mage::getSingleton('chargepayment/session_quote');
+        $isLocal    = $session->getIsLocalPayment();
+        $lpUrl      = $session->getLpRedirectUrl();
+        $is3d       = $session->getIs3d();
+        $is3dUrl    = $session->getPaymentRedirectUrl();
+
+        $session
+            ->setIsLocalPayment(false)
+            ->setLpRedirectUrl(false)
+            ->setIs3d(false)
+            ->setPaymentRedirectUrl(false);
+
+        if ($isLocal) {
+            $this->restoreQuoteSession();
+
+            return $lpUrl;
+        }
+
+        if ($is3d && $is3dUrl) {
+            $this->restoreQuoteSession();
+
+            return $is3dUrl;
+        }
+
+        return false;
+    }
+
+    /**
      * Create Payment Token
      *
      * @return array

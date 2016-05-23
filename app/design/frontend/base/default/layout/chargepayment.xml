@@ -26,20 +26,7 @@
     </chargepayment_api_complete>
     <checkout_onepage_index translate="label">
         <reference name="head">
-            <action method="addJs"><script>checkout_api/chargepayment.js</script></action>
-            <action method="addCss"><stylesheet>css/checkout-styles.css</stylesheet></action>
-        </reference>
-        <reference name="before_body_end">
-            <block type="core/text" name="checkoutapijs">
-                <action method="setText" ifconfig="payment/checkoutapijs/active">
-                    <content  helper="chargepayment/getJsPathHtml"></content>
-                </action>
-            </block>
-            <block type="core/text" name="checkoutapikit">
-                <action method="setText" ifconfig="payment/checkoutapikit/active">
-                    <content  helper="chargepayment/getKitJsPathHtml"></content>
-                </action>
-            </block>
+            <action method="addJs"><script>checkout_api/core/chargepayment.js</script></action>
         </reference>
     </checkout_onepage_index>
     <checkout_onepage_review>
@@ -61,4 +48,27 @@
             </block>
         </reference>
     </checkout_onepage_review>
+    <default>
+        <reference name="head">
+            <action method="addJs"><script>checkout_api/chargepayment.js</script></action>
+            <action method="addCss"><stylesheet>css/checkout-styles.css</stylesheet></action>
+        </reference>
+        <reference name="after_body_start">
+            <block type="core/text" name="checkoutapijs">
+                <action method="setText" ifconfig="payment/checkoutapijs/active">
+                    <content  helper="chargepayment/getJsPathHtml"></content>
+                </action>
+            </block>
+            <block type="core/text" name="checkoutapikit">
+                <action method="setText" ifconfig="payment/checkoutapikit/active">
+                    <content  helper="chargepayment/getKitJsPathHtml"></content>
+                </action>
+            </block>
+            <block name="checkoutapi.default" type="chargepayment/default" >
+                <action method="setTemplate">
+                    <template>checkoutapi/chargepayment/default.phtml</template>
+                </action>
+            </block>
+        </reference>
+    </default>
 </layout>

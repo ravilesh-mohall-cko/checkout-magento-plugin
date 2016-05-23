@@ -23,6 +23,46 @@ abstract class CheckoutApi_ChargePayment_Model_Checkout extends Mage_Payment_Mod
     protected $_canSaveCc       = false;
 
     /**
+     * Redirect URL
+     *
+     * @return mixed
+     *
+     * @version 20160516
+     */
+    public abstract function getCheckoutRedirectUrl();
+
+    /**
+     * Redirect URL after order place
+     *
+     * @return mixed
+     */
+    public abstract function getOrderPlaceRedirectUrl();
+
+    /**
+     * Restore session for 3d
+     */
+    public function restoreQuoteSession() {
+        $order      = Mage::registry('charge_payment_order');
+        $quoteId    = $order->getQuoteId();
+        $session    = Mage::getSingleton('chargepayment/session_quote');
+
+        $session->setLastOrderIncrementId($order->getIncrementId());
+        $session->addCheckoutOrderIncrementId($order->getIncrementId());
+
+        $order->setStatus(Mage_Sales_Model_Order::STATE_PENDING_PAYMENT);
+        $order->save();
+
+        $quote = Mage::getModel('sales/quote')->load($quoteId);
+
+        if ($quote->getId()) {
+            $quote->setIsActive(1)
+                ->setReservedOrderId(NULL)
+                ->save();
+            Mage::getSingleton('checkout/session')->replaceQuote($quote);
+        }
+    }
+
+    /**
      * Return debug value
      *
      * @return mixed

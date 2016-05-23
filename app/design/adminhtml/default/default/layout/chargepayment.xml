@@ -2,7 +2,7 @@
 <layout version="0.1.0">
     <adminhtml_sales_order_create_index>
         <reference name="head">
-            <action method="addJs"><file>checkout_api/chargepayment.js</file></action>
+            <action method="addJs"><file>checkout_api/core/chargepayment.js</file></action>
         </reference>
         <reference name="before_body_end">
             <block type="core/template" name="checkout_api_order_js" template="checkoutapi/chargepayment/order/frame.phtml" />
