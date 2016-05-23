@@ -75,6 +75,12 @@ jQuery(document).ready(function(){
 });
 
 window.checkoutApiSubmitOrder = function() {
+    if  (typeof window.checkoutApiSubmitOrderCustom != 'undefined') {
+        window.checkoutApiSubmitOrderCustom();
+
+        return true;
+    }
+
     if (jQuery('#aw-onestepcheckout-place-order-button').length > 0) {
         jQuery('#aw-onestepcheckout-place-order-button').trigger('click');
     }
