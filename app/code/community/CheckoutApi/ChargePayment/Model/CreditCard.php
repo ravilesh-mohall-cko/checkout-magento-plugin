@@ -18,6 +18,40 @@ class CheckoutApi_ChargePayment_Model_CreditCard extends CheckoutApi_ChargePayme
     const TRANSACTION_INDICATOR_REGULAR     = 1;
 
     /**
+     * Redirect URL
+     *
+     * @return mixed
+     *
+     * @version 20160516
+     */
+    public function getCheckoutRedirectUrl() {
+        return false;
+    }
+
+    /**
+     * Redirect URL after order place
+     *
+     * @return mixed
+     */
+    public function getOrderPlaceRedirectUrl() {
+        $session    = Mage::getSingleton('chargepayment/session_quote');
+        $is3d       = $session->getIs3d();
+        $is3dUrl    = $session->getPaymentRedirectUrl();
+
+        $session
+            ->setIs3d(false)
+            ->setPaymentRedirectUrl(false);
+
+        if ($is3d && $is3dUrl) {
+            $this->restoreQuoteSession();
+
+            return $is3dUrl;
+        }
+
+        return false;
+    }
+
+    /**
      * Assign data to info model instance
      *
      * @param   mixed $data

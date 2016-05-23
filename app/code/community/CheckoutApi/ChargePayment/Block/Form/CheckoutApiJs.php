@@ -285,4 +285,15 @@ class CheckoutApi_ChargePayment_Block_Form_CheckoutApiJs  extends Mage_Payment_B
 
         return $this->getUrl('chargepayment/api/place/', $params);
     }
+
+    /**
+     * Return Checkout.com script
+     *
+     * @return mixed
+     *
+     * @version 20160512
+     */
+    public function getJsPathHtml() {
+        return Mage::helper('chargepayment')->getJsPathHtml();
+    }
 }

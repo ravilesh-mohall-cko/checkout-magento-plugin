@@ -18,6 +18,66 @@ class CheckoutApi_ChargePayment_Model_CreditCardKit extends CheckoutApi_ChargePa
     const RENDER_MODE           = 2;
 
     /**
+     * Redirect URL
+     *
+     * @return mixed
+     *
+     * @version 20160516
+     */
+    public function getCheckoutRedirectUrl() {
+        $controllerName     = (string)Mage::app()->getFrontController()->getRequest()->getControllerName();
+
+        if ($controllerName === 'onepage') {
+            return false;
+        }
+
+        $requestData        = Mage::app()->getRequest()->getParam('payment');
+        $cardToken          = !empty($requestData['checkout_kit_card_token']) ? $requestData['checkout_kit_card_token'] : null;
+        $session            = Mage::getSingleton('chargepayment/session_quote');
+
+        if (!is_null($cardToken)) {
+            return false;
+        }
+
+        $params['method']           = $this->_code;
+        $params['kit_number']       = $requestData['checkout_kit_number'];
+        $params['kit_name']         = $requestData['checkout_kit_name'];
+        $params['kit_month']        = $requestData['checkout_kit_month'];
+        $params['kit_year']         = $requestData['checkout_kit_year'];
+        $params['kit_cvv']          = $requestData['checkout_kit_cvv'];
+        $params['kit_public_key']   = Mage::helper('chargepayment')->getConfigData($this->_code, 'publickey');
+
+        $session->setJsCheckoutApiParams($params);
+
+        return Mage::helper('checkout/url')->getCheckoutUrl();
+    }
+
+    /**
+     * Redirect URL after order place
+     *
+     * @return bool
+     *
+     * @version 20160516
+     */
+    public function getOrderPlaceRedirectUrl() {
+        $session    = Mage::getSingleton('chargepayment/session_quote');
+        $is3d       = $session->getIs3d();
+        $is3dUrl    = $session->getPaymentRedirectUrl();
+
+        $session
+            ->setIs3d(false)
+            ->setPaymentRedirectUrl(false);
+
+        if ($is3d && $is3dUrl) {
+            $this->restoreQuoteSession();
+
+            return $is3dUrl;
+        }
+
+        return false;
+    }
+
+    /**
      * Return Quote from session
      *
      * @return mixed

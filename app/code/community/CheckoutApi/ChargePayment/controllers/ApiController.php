@@ -78,32 +78,6 @@ class CheckoutApi_ChargePayment_ApiController extends Mage_Core_Controller_Front
     }
 
     /**
-     * Place order
-     *
-     * @url chargepayment/api/place/
-     *
-     * @version 20160215
-     */
-    public function placeAction() {
-        $method = Mage::getSingleton('checkout/session')->getQuote()->getPayment()->getMethod();
-
-        if (!empty($method)) {
-            $this->_forward(
-                'saveOrder',
-                'onepage',
-                'checkout',
-                $this->getRequest()->getParams()
-            );
-        } else {
-            $result = array(
-                'error_messages' => $this->__('Please, choose payment method'),
-                'goto_section'   => 'payment'
-            );
-            $this->getResponse()->setBody(Mage::helper('core')->jsonEncode($result));
-        }
-    }
-
-    /**
      * Action for verify charge by payment token
      *
      * @url chargepayment/api/callback/?cko-payment-token=payment_token

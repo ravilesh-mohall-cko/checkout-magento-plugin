@@ -12,22 +12,20 @@
         <li>
             <form class="card-form" method="POST" action="<?php echo Mage::helper('core/url')->getCurrentUrl()?>">
                 <input type="hidden" id="cko-kit-card-token" name="payment[checkout_kit_card_token]" value=""/>
-                <div class="checkout-kit-card-name-block">
-                    <input name="card-name" type="text" placeholder="Name on card"  class="chName input-text required-entry"/>
+                <div class="checkout-kit-card-block">
+                    <input type="text" placeholder="Name on card" name="payment[checkout_kit_name]" class="chName input-text required-entry"/>
                 </div>
                 <div class="checkout-kit-card-block">
-                    <input class="input-text cardNumber required-entry validate-cc-number" type="text" placeholder="Credit card number">
+                    <input class="input-text cardNumber required-entry validate-cc-number" type="text" name="payment[checkout_kit_number]" placeholder="Credit card number">
                 </div>
-                <div class="checkout-kit-date-block">
-                    <div>
-                        <input class="input-text expiryMonth required-entry validate-length maximum-length-2 minimum-length-2 validate-digits" type="text" placeholder="MM" maxlength="2">
-                    </div>
-                    <div>
-                        <input class="input-text expiryYear required-entry validate-length maximum-length-2 minimum-length-2 validate-digits" type="text" placeholder="YY" maxlength="2">
-                    </div>
-                    <div>
-                        <input class="input-text cvv required-entry" type="text" placeholder="CVV">
-                    </div>
+                <div class="checkout-kit-card-block">
+                    <input class="input-text expiryMonth required-entry validate-length maximum-length-2 minimum-length-2 validate-digits" type="text" placeholder="MM" maxlength="2" name="payment[checkout_kit_month]">
+                </div>
+                <div class="checkout-kit-card-block">
+                    <input class="input-text expiryYear required-entry validate-length maximum-length-2 minimum-length-2 validate-digits" type="text" placeholder="YY" maxlength="2" name="payment[checkout_kit_year]">
+                </div>
+                <div class="checkout-kit-card-block">
+                    <input class="chCvv input-text cvv required-entry" name="payment[checkout_kit_cvv]" type="text" placeholder="CVV">
                 </div>
             </form>
             <script>
